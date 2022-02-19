@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+          crossorigin="anonymous"
+  />
+  <link
+          rel="stylesheet"
+          href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+          crossorigin="anonymous"
+  />
+  <link rel="stylesheet" href="./css/shoppingPage.css" />
+  <link rel="stylesheet" href="./css/footer.css" />
+  <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+          crossorigin="anonymous"
+  ></script>
+  <script
+          type="text/javascript"
+          src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"
+  ></script>
+  <script type="text/javascript" src="./srcipt/cookie.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#header").load("./header.html");
+      $("#footer").load("./footer.html");
+
+
+      let nowPage = 1;
+      let nowCategoryId = "c001";
+      let nowPriceUpandDown;
+      let nowSearchText;
+      let nowItemNo ;
+      let nowPrice;
+      let qualityChoose;
+
+      //搜尋功能
+      $("#searchIcon").click(function(){
+        nowSearchText = $("#searchBar").val();
+        nowPage = 1;
+        getProductByCateIdAndPage(nowCategoryId,nowPage,nowPriceUpandDown,nowSearchText);
+      });
+
+      //點擊價格上升按鈕,利用當前分類和當前頁面去取得價格排序
+      $("#priceUp").click(function(){
+        nowPriceUpandDown = "priceUp";
+        $(this).css("background-color","#005AB5");
+        $("#priceDown").css("background-color","#6c757d");
+
+        nowPage = 1;
+        getProductByCateIdAndPage(nowCategoryId,nowPage,nowPriceUpandDown,nowSearchText);
+      });
+      $("#priceDown").click(function(){
+        nowPriceUpandDown = "priceDown";
+        $(this).css("background-color","#005AB5");
+        $("#priceUp").css("background-color","#6c757d");
+        nowPage = 1;
+        getProductByCateIdAndPage(nowCategoryId,nowPage,nowPriceUpandDown,nowSearchText);
+      });
+
+      //預設取原子筆的第一頁
+      getProductByCateIdAndPage("c001", 1);
+
+      //綁定側欄點擊時 取該類別的第一頁
+      $(".accordion-item")
+              .find(".categorybtForm")
+              .each(function (index, element) {
+                $(this).click(function () {
+                  nowPage = 1;
+                  nowPriceUpandDown = "";
+                  $("#searchBar").val(null);
+                  nowSearchText = null;
+                  $("#priceUp,#priceDown").css("background-color","#6c757d");
+                  nowCategoryId = $(this).attr("name");
+                  getProductByCateIdAndPage(nowCategoryId, 1);
+                });
+              });
+
+      //hover側欄換顏色
+      $(".accordion-body").each(function (index, element) {
+
+        $(this).hover(function(){
+          $(this).css("background-color","#66B3FF");
+          $(this).find(".categorybtForm").css({"background-color":"#66B3FF","color":"white"});
+        },function(){
+          $(this).css("background-color","white");
+          $(this).find(".categorybtForm").css({"background-color":"white","color":"black"});
+        });
+      });
+
+
+      // 商品加入收藏清單
+      $("#addLikebt").click(function () {
+
+
+        let addLikeLikeVin={
+          itemNo: nowItemNo
+        };
+
+        $.ajax({
+          url:'/bunnyProject/addLikeList',
+          data:JSON.stringify(addLikeLikeVin),
+          type: "POST",
+          dataType:"json",
+          contentType:"application/json;charset=utf-8",
+          success:function (data){
+
+            if(data.success){
+              if(data.resMsg){
+                alert(data.resMsg);
+              }
+            }else {
+              if(data.resMsg){
+                alert(data.resMsg);
+              }
+            }
+          },
+          error: function() {
+            alert('error');
+          }
+
+        });
+
+      });
+
+
+
+      //商品加入購物車
+      $("#addShopListbt").click(function () {
+
+        qualityChoose= $("select").val();
+
+        let addShopListVin={
+          itemNo: nowItemNo,
+          quality:qualityChoose,
+          price:nowPrice
+        };
+
+        $.ajax({
+          url:'/bunnyProject/addShopListS',
+          data:JSON.stringify(addShopListVin),
+          type: "POST",
+          dataType:"json",
+          contentType:"application/json;charset=utf-8",
+          success:function (data){
+
+            if(data.success){
+
+
+              if(data.resMsg){
+                alert(data.resMsg);
+              }
+            }else {
+
+              if(data.resMsg){
+                alert(data.resMsg);
+              }
+            }
+
+          },
+          error: function() {
+            alert('error');
+          }
+
+        });
+
+      });
+
+
+
+      function getProductByCateIdAndPage(categoryId, selectPage,priceUpandDown,searchText) {
+
+        //左邊是定義,右邊是值,左邊名和後端要對上
+        let productVin = {
+          categoryId: categoryId,
+          priceUpandDown:priceUpandDown,
+          searchText : searchText
+        };
+
+        $.ajax({
+          url: "/bunnyProject/shoppingPage",
+          type: "POST",
+          dataType: "json",
+          data: JSON.stringify(productVin), //這邊放整個要傳入後端的物件
+          contentType: "application/json;charset=utf-8",
+          success: function (data) {
+            //初始化、點擊左側欄、排序或是分頁時，如果查詢商品清單成功，隱藏商品詳細資訊，秀出商品展示頁
+            $("#itemPage").hide();
+            $("#itemListPage").show();
+
+            //取第一筆的商品的類別中文更新至上方標籤
+            if(data.products[0]){
+              $("#topFontSize").text(data.products[0].categorySub);
+            }else{
+              $("#topFontSize").text("查無資料");
+            }
+
+            //data 是後台整個回傳的物件
+            //計算有幾頁
+            let pageNumber = Math.floor(data.products.length / 6);
+            let pageRemain = data.products.length % 6;
+            if (pageRemain !== 0) {
+              pageNumber = pageNumber + 1;
+            }
+
+            //利用多個append產生分頁按鈕
+            let pages = $(".page").find("ul");
+            pages.html("");
+            pages.append(
+                    `<li class="page-item">` +
+                    ` <a class="page-link" aria-label="Previous" id="previous">` +
+                    `<span aria-hidden="true">&laquo;</span>` +
+                    `</a>` +
+                    `</li>`
+            );
+
+            for (let i = 1; i <= pageNumber; i++) {
+              if(nowPage==i){
+                pages.append(
+                        `<li class="page-item" ><a class="page-link" style="background-color:#6EB4DC;color:white;" href="#">` +
+                        i +
+                        `</a></li>`
+                );
+              }else{
+                pages.append(
+                        `<li class="page-item"><a class="page-link" href="#">` +
+                        i +
+                        `</a></li>`
+                );
+              }
+            }
+
+            pages.append(
+                    `<li class="page-item">` +
+                    `<a class="page-link" aria-label="Next" id="next">` +
+                    ` <span aria-hidden="true">&raquo;</span>` +
+                    `</a>` +
+                    `</li>`
+            );
+
+            $(".page-link").each(function (index, element) {
+              $(this).click(function () {
+                if($(this).attr("id")=="previous"){
+                  if(nowPage > 1){
+                    nowPage = nowPage - 1;
+                  }
+                }else if($(this).attr("id")=="next"){
+                  if(nowPage<pageNumber){
+                    nowPage++;
+                  }
+                }else{
+                  nowPage = $(this).text();
+                }
+                getProductByCateIdAndPage(nowCategoryId, nowPage,nowPriceUpandDown,nowSearchText);
+
+              });
+            });
+
+            //先取得放產品的地方
+            let itc = $(".itemContainer");
+            itc.html("");
+            //處理顯示商品
+            let beginNo = (selectPage - 1) * 6;
+            let endNo = selectPage * 6;
+            if (data.products.length < endNo) {
+              endNo = data.products.length;
+            }
+
+            for (let i = beginNo; i < endNo; i++) {
+              // console.log(data.products[i]);
+
+              itc.append(
+                      `<div class="item" name="`+
+                      data.products[i].itemNo
+                      +`">` +
+                      `<div style="width: 229px;">` +
+                      `<img src="` +
+                      data.products[i].imageUrl +
+                      `"class="img">` +
+                      ` </div>` +
+                      `<div class="itemInfo">` +
+                      data.products[i].itemBrand +
+                      `</div>` +
+                      `<div class="itemInfo">` +
+                      data.products[i].itemName +
+                      `</div>` +
+                      `<hr>` +
+                      `<div class="price" style="text-align:center">NT$` +
+                      data.products[i].price +
+                      `</div>` +
+                      `</div>`
+              );
+            }
+            $(".item").each(function (index, element) {
+              $(this).click(function(){
+                //舊code,原本是另外一頁網頁,是用url取得參數的做法
+                // let shoppingItemUrl = new URL(window.location.origin + "/bunnyProject/store/shoppingcart.html");
+                // let searchParams = new URLSearchParams({itemNo:$(this).attr("name")});
+                // shoppingItemUrl.search = searchParams;
+                // window.location.href = shoppingItemUrl.href;
+                showSingleItem($(this).attr("name"));
+
+              });
+
+            });
+          },
+          error: function () {
+            alert("error");
+          },
+        });
+      }
+
+      function showSingleItem(selectItemNo){
+        let getProductByItemNoVin = {
+          itemNo : selectItemNo,
+        };
+
+        $.ajax({
+          url: '/bunnyProject/addShoppingCart',
+          data: JSON.stringify(getProductByItemNoVin), //這邊放整個要傳入後端的物件
+          type: "POST",
+          dataType: "json",
+          contentType: "application/json;charset=utf-8",
+          success: function(data) {//data 是後台整個回傳的物件
+            nowItemNo=data.productBean.itemNo;
+            nowPrice = data.productBean.price;
+            $("#itemListPage").hide();
+            $("#itemPage").show();
+
+            $("#itemCategorySub").text(data.productBean.categorySub);
+            $("#originalprice").html("<del>原價$" + data.productBean.price + "</del>");
+            $("#price").text("特價$" + data.productBean.price);
+            $("#productImage").attr("src",data.productBean.imageUrl);
+            $("#brandName").text(data.productBean.itemBrand);
+
+            let penName = data.productBean.itemName;
+            if(data.productBean.itemOption){
+              penName += " - " + data.productBean.itemOption
+            }
+
+            $("#penName").text(penName);
+            $("#model").text("商品規格 : "+data.productBean.itemInfo);
+
+            let color = $("#colorLink");
+
+            color.html("");
+            for(let i =0;i<data.colorImageList.length;i++){
+              if(selectItemNo==data.colorImageList[i].itemNo){
+                color.append(
+                        `<div`+
+                        ` style="`+
+                        `height: 30px;`+
+                        `width: 30px;`+
+                        `box-shadow:0 0 1px 3px #2828FF;`+
+                        `margin-right: 10px;`+
+                        `background-color:`+
+                        data.colorImageList[i].colorText+
+                        `;`+
+                        `display: inline-block;"`+
+                        `name="` + data.colorImageList[i].itemNo + `"` +
+                        `></div>`
+                );
+
+              }else{
+                color.append(
+                        `<div`+
+                        ` style="`+
+                        `height: 30px;`+
+                        `width: 30px;`+
+                        `margin-right: 10px;`+
+                        `background-color:`+
+                        data.colorImageList[i].colorText+
+                        `;`+
+                        `display: inline-block;"`+
+                        `name="` + data.colorImageList[i].itemNo + `"` +
+                        `></div>`
+                );
+
+              }
+            }
+
+            /*利用點擊網頁中顏色div重新呼叫ajax方法取得產品顏色及更改品名(後面加顏色文字)*/
+            color.find("div").each(function(){
+              $(this).click(function(){
+                // let shoppingItemUrl = new URL(window.location.origin + "/bunnyProject/store/shoppingcart.html");
+                // let searchParams = new URLSearchParams({itemNo:$(this).attr("name")});
+                // shoppingItemUrl.search = searchParams;
+                // window.location.href = shoppingItemUrl.href;
+                showSingleItem($(this).attr("name"));
+              });
+            });
+          },
+
+          error: function() {
+            alert('error');
+          }
+        });
+      }
+
+    });
+  </script>
+
+  <title>Bunny購物商城</title>
+</head>
+<body>
+<!-- 透過 jquery 載入 header -->
+<div id="header"></div>
+
+<div class="container-fluid px-5 mb-5" style="margin-top: 50px;">
+  <!-- 搜尋列及放大鏡 -->
+  <div class="row ms-5">
+    <div class="col-5"></div>
+    <input
+            type="text"
+            id="searchBar"
+            placeholder="請輸入商品"
+            style="outline: none;"
+            class="col-xl-2 col-md-2 col-sm-2"
+    />
+    <span class="col-1" style="font-size: 30px; color: gray;"
+    ><i class="fas fa-search" id="searchIcon"></i
+    ></span>
+  </div>
+
+  <!-- 價格按鈕 -->
+  <div class="row ms-5">
+    <div class="col-10" style="text-align: end;">
+      <button type="button" class="btn btn-secondary my-2" id="priceUp">
+        價格 <i class="fas fa-arrow-circle-up"></i>
+      </button>
+      <button type="button" class="btn btn-secondary" id="priceDown">
+        價格 <i class="fas fa-arrow-circle-down"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ShoppingItem start -->
+
+  <div class="row ms-5">
+    <div class="col-2">
+      <!-- 側邊欄 -->
+      <div class="accordion" id="accordionPanelsStayOpenExample">
+        <div class="itemCategory">
+          <span>商品分類</span>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseOne"
+            >
+              <strong style="font-size: 1.25rem;">書寫用品</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c001">原子筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c002">中性筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c003">鋼珠筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c004">自動鉛筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c005">自動筆芯</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c006">簽字筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c007">螢光筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c008">油性筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c009">白板筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingOne"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c010">鉛筆</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseTwo"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseTwo"
+            >
+              <strong style="font-size: 1.25rem;">修正系列</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseTwo"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingTwo"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c011">橡皮擦</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseTwo"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingTwo"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c012">修正帶</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseTwo"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingTwo"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c013">修正液</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseThree"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseThree"
+            >
+              <strong style="font-size: 1.25rem;">標籤</strong>
+            </button>
+          </h2>
+
+          <div
+                  id="panelsStayOpen-collapseThree"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingThree"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c015">標籤</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseFour"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseFour"
+            >
+              <strong style="font-size: 1.25rem;">黏貼膠類</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseFour"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFour"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c016">牛皮紙膠帶</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFour"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFour"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c017">泡棉膠帶</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFour"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFour"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c018">捲軸膠帶</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFour"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFour"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c019">
+                膠水&口紅膠
+              </button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFour"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFour"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c020">隱形膠帶</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFour"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFour"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c021">雙面膠帶</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFour"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFour"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c022">授權商品</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseFive"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseFive"
+            >
+              <strong style="font-size: 1.25rem;">事務用品</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseFive"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFive"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c023">尺</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFive"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFive"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c024">計算機</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFive"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFive"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c025">切割墊</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFive"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFive"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c026">美工刀</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFive"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFive"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c027">訂書機</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseFive"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingFive"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c028">訂書針</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingSix">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseSix"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseSix"
+            >
+              <strong style="font-size: 1.25rem;">檔案資料夾</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseSix"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSix"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c029">多層文件夾</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSix"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSix"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c030">L夾</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSix"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSix"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c031">
+                夾桿式文件夾
+              </button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSix"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSix"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c032">文件袋</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSix"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSix"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c033">資料盒</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingSeven">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseSeven"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseSeven"
+            >
+              <strong style="font-size: 1.25rem;">美術工藝</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseSeven"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSeven"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c034">水彩筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSeven"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSeven"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c035">水性麥克筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSeven"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSeven"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c036">色紙</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSeven"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSeven"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c037">剪貼本</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSeven"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSeven"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c038">彩色筆</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseSeven"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingSeven"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c039">蠟筆</button>
+            </div>
+          </div>
+
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingEight">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseEight"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseEight"
+            >
+              <strong style="font-size: 1.25rem;">筆記本</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseEight"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingEight"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c040">固頁筆記本</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseEight"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingEight"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c041">線圈筆記本</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseEight"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingEight"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c042">計畫筆記本</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingNine">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseNine"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseNine"
+            >
+              <strong style="font-size: 1.25rem;">紙製品</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseNine"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingNine"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c043">
+                方格紙/稿紙
+              </button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseNine"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingNine"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c044">
+                報告易撕紙
+              </button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseNine"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingNine"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c045">信封</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseNine"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingNine"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c046">卡片</button>
+            </div>
+          </div>
+          <div
+                  id="panelsStayOpen-collapseNine"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingNine"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c047">計算紙</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingTen">
+            <button
+                    class="accordion-button collapsed bigCategoryForm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseTen"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseTen"
+            >
+              <strong style="font-size: 1.25rem;">書架</strong>
+            </button>
+          </h2>
+          <div
+                  id="panelsStayOpen-collapseTen"
+                  class="accordion-collapse collapse samllCategoryForm"
+                  aria-labelledby="panelsStayOpen-headingTen"
+          >
+            <div class="accordion-body">
+              <button class="categorybtForm" name="c048">書架</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 商品分類 -->
+    <div id="itemListPage" class="col-8 ps-5">
+      <div
+              class="col-12 mb-5"
+              style="
+              text-align: center;
+              justify-content: center;
+              height: 30px;
+              background: rgba(52, 133, 178, 0.8);
+              box-shadow: inset 0px 1.83225px 1.83225px rgba(0, 0, 0, 0.25);
+              border-radius: 5px;
+            "
+      >
+        <p id="topFontSize" style="color: white;">商品分類</p>
+      </div>
+      <div class="itemContainer"></div>
+      <!-- pageNum  start-->
+      <div class="page">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center"></ul>
+        </nav>
+      </div>
+      <!-- pageNum  start-->
+    </div>
+
+    <!-- 以下包圖片和商品詳細內容 -->
+    <div id="itemPage" class="col-8 ps-5" style="display: none;">
+      <div
+              class="col-12 mb-5"
+              style="
+              text-align: center;
+              justify-content: center;
+              height: 30px;
+              background: rgba(52, 133, 178, 0.8);
+              box-shadow: inset 0px 1.83225px 1.83225px rgba(0, 0, 0, 0.25);
+              border-radius: 5px;
+            "
+      >
+        <p id="itemCategorySub" style="color: white;">原子筆</p>
+      </div>
+
+      <div class="row">
+        <div class="col-5 ps-5" style="text-align: center;">
+          <img
+                  class="mx-4"
+                  id="productImage"
+                  src=""
+                  style="
+                  width: 80%;
+                  box-shadow: inset 0px 1.83225px 1.83225px rgba(0, 0, 0, 0.29);
+                  border-radius: 39.3933px;
+                "
+          />
+        </div>
+        <div class="col-1"></div>
+        <!-- 商品品牌及品名 -->
+        <div class="col-6">
+          <div id="brandName" class="my-2">PILOT</div>
+          <span id="penName">百樂輕油書寫筆 白桿0.7mm-粉紅</span>
+          <hr width="400" />
+          <span class="lh-lg mx-5" id="originalprice"
+          ><del>原價$45</del></span
+          >
+          <span class="ms-5" id="price">NT$36</span>
+
+          <h6 class="ms-5 mt-4" id="model">商品規格 : 0.7 mm</h6>
+
+          <!-- 顏色選擇 -->
+          <div id="colorLink" class="ms-5 mt-4"></div>
+          <br />
+
+          <div class="my-4 me-5" style="text-align: center;">
+            <span id="buyquantity" class="me-2">購買數量:</span>
+            <select
+                    class="form-select;display-inline-block;"
+                    aria-label="Default select example"
+            >
+              <option selected;>1</option>
+<!--              <option value="1">1</option>-->
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+          <div class="ms-5">
+            <button
+                    id="addLikebt"
+                    type="button"
+                    class="btn me-3"
+                    style="background-color: #83a9e1; color: white; width: 140px;"
+            >
+              <i
+                      class="fab fa-gratipay"
+                      style="font-size: 20px; color: white; margin-right: 10px;"
+              ></i
+              >收藏商品
+            </button>
+            <button
+                    id="addShopListbt"
+                    type="button"
+                    class="btn"
+                    style="background-color: #f77a7a; color: white; width: 140px;"
+            >
+              <i
+                      class="fas fa-shopping-bag"
+                      style="font-size: 20px; color: white; margin-right: 10px;"
+              ></i
+              >加入購物車
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ShoppingItem end -->
+
+<!-- 透過 jquery 載入 header -->
+<div id="footer" style="margin-top:100px;"></div>
+</body>
+</html>

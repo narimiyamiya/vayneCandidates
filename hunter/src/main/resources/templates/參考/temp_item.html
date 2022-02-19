@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/d8ff0c40ed.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>123</title>
+    <script type="text/javascript">
+      $(function () {
+      $.each(Array(7), function(i) {
+          var clickedButton = $('#cwt-button' + (++i));
+  
+          $(clickedButton).click(function () {
+              var currentDay = $('#cwt-timetable div.current');
+  
+              
+              var selectedDay = $('#cwt-timetable div.cwt-Day' + i);
+              currentDay.removeClass('current').addClass('previous');
+              (selectedDay).css({
+                  opacity: 0.0
+              }).addClass('current').animate({
+                  opacity: 1.0
+              }, 1000, function () {
+                  currentDay.removeClass('previous');
+              });
+          });
+      });
+  });
+    </script>
+</head>
+<body>
+
+ 
+  <div class="cwt-buttons">
+    <a id="cwt-button1">Monday</a>
+    <a id="cwt-button2">Tuesday</a>
+    <a id="cwt-button3">Wednesday</a>
+    <a id="cwt-button4">Thursday</a>
+    <a id="cwt-button5">Friday</a>
+    <a id="cwt-button6">Saturday</a>
+    <a id="cwt-button7">Sunday</a>
+    </div>
+    
+    <div id="cwt-timetable">
+    <div class="current">Housework</div>
+    <div class="cwt-Day1">Kickboxing</div>
+    <div class="cwt-Day2">Homework</div>
+    <div class="cwt-Day3">Yoga</div>
+    <div class="cwt-Day4">Eating</div>
+    <div class="cwt-Day5">Fasting</div>
+    <div class="cwt-Day6">Running</div>
+    <div class="cwt-Day7">Funeral</div>
+    </div>
+
+</body>
+</html>

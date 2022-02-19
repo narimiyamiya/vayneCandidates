@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="../jquery.twbsPagination.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
+    <link th:href="@{~/index.css}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--    <script>-->
+<!--        $(function() {-->
+<!--            $("#header").load("/header.html");-->
+<!--        });-->
+<!--    </script>-->
+
+    <script>
+       $(function() {
+           $("#header").load("header");
+
+           let allMemberList;
+           let thisMemberId;
+           getAllMember();
+
+           function getAllMember(){
+               $.ajax({
+                   url: "/findAll",
+                   type: "POST",
+                   dataType: "json",
+                   // data: JSON.stringify(memberId), //這邊放整個要傳入後端的物件
+                   contentType: "application/json;charset=utf-8",
+                   success: function (data) {
+                       console.log(data);
+                       allMemberList = data;
+                       showPage(1);
+
+                       let totalPages = allMemberList.length/10;
+                       if(allMemberList.length % 10 > 0){
+                           totalPages++;
+                       }
+
+                       window.pagObj = $('#pagination').twbsPagination({
+                           totalPages: totalPages,
+                           visiblePages: 5,//顯示幾個頁碼
+                           first:"第一頁",
+                           prev:"上一頁",
+                           last:"最後一頁",
+                           next:"下一頁",
+                           onPageClick: function (event, page) {
+                               showPage(page);
+                           }
+                       });
+                   }
+               });
+           }
+
+           function showPage(pageNo){
+               let tbody = $("#candidates");
+               tbody.html("");
+
+               let beginNo = (pageNo-1) * 10;
+               let endNo = pageNo * 10;
+               if (allMemberList.length < endNo) {
+                   endNo = allMemberList.length;
+               }
+
+               for (let i = beginNo; i < endNo; i++) {
+                   let date = new Date(allMemberList[i].updateTime);
+                   let number = i+1 ;
+
+                   tbody.append(
+                       ` <tr>` +
+                       `<th scope="row">`+ number +`</th>` +
+                       `<td>` + allMemberList[i].name + `</td>` +
+                       `<td>` + allMemberList[i].age + `</td>` +
+                       `<td>` + allMemberList[i].gender + `</td>` +
+                       `<td>` + allMemberList[i].mainSkill + `</td>` +
+                       `<td>` + allMemberList[i].secondSkill + `</td>` +
+                       `<td>` + allMemberList[i].hopeWorkLoc + `</td>` +
+                       `<td>` + allMemberList[i].client + `</td>` +
+                       `<td class="time">` + date.getFullYear() + `/` + (date.getMonth() + 1) + `/` + date.getDate() + `</td>` +
+                       `<td>`+`<button name="update" style="border: none"`+`thisMemberId=`+`"`+allMemberList[i].memberId+`"`+`>`+`<i class="fas fa-pen"></i>`+`</button>`+`</td>`+
+                       `<td>`+`<button name="deleteMember" style="border:none"`+`thisMemberId=`+`"`+allMemberList[i].memberId+`"`+`>`+`<i class="fas fa-trash-alt" ></i>`+`</button>`+`<td>`+
+                       `</tr>`
+                   )
+               }
+               $("[name='deleteMember']").each(function (index, element)  {
+
+                   $(this).click(function () {
+                       thisMemberId = $(this).attr("thisMemberId") ;
+
+                       let deleteMemberVin ={
+                           memberId:thisMemberId
+                       }
+                       deleteMember(deleteMemberVin);
+
+                   });
+               });
+
+               $("[name='update']").each(function (index, element)  {
+
+                   $(this).click(function () {
+                       thisMemberId = $(this).attr("thisMemberId") ;
+
+                       let updateMemberVin ={
+                           memberId:thisMemberId
+                       }
+
+
+                   });
+               });
+
+           }
+            //新增求職者方法開始
+           $("#confirm").click(function () {
+               $('#exampleModal').modal('hide');
+               let AddMemberInfoVin ={
+                   name:$("#name").val(),
+                   gender:$('input[name=gender]:checked').val(),
+                   age:$("#age").val(),
+                   phone:$("#phone").val(),
+                   email:$("#email").val(),
+                   school:$("#school").val(),
+                   major:$("#major").val(),
+                   company:$("#company").val(),
+                   salary:$("#salary").val(),
+                   mainSkill:$("#mainSkill").val(),
+                   secondSkill:$("#secondSkill").val(),
+                   role:$("#role").val(),
+                   seniority: $("#seniority").val(),
+                   hopeWorkLoc:$("#hopeWorkLoc").val(),
+                   hope:$("#hope").val(),
+                   client:$("input[type='checkbox']").val()?"是":"否"
+               }
+
+               $.ajax({
+                   url: "/addCandidate",
+                   data: JSON.stringify(AddMemberInfoVin), //這邊放整個要傳入後端的物件
+                   type: "POST",
+                   dataType: "json",
+                   contentType: "application/json;charset=utf-8",
+                   success: function(data) {
+                    console.log(data)
+                    if(data.isSuccess=="Y"){
+                        alert(data.errorMsg);
+                        getAllMember();
+                    }else{
+                        alert(data.errorMsg);
+
+                    }
+
+                   }
+
+
+               });
+               //新增求職者方法結束
+           });
+
+
+           //刪除求職者方法開始
+           //將每個button賦予memberId的值,以便後端獲得。
+           function deleteMember(deleteMemberVin){
+               $.ajax({
+                   url: "/deleteCandidate",
+                   data: JSON.stringify(deleteMemberVin), //這邊放整個要傳入後端的物件
+                   type: "POST",
+                   dataType: "json",
+                   contentType: "application/json;charset=utf-8",
+                   success: function(data) {
+                       console.log(data)
+                       if(data.isSuccess=="Y"){
+                           alert(data.errorMsg);
+                           getAllMember();
+                       }else{
+                           alert(data.errorMsg);
+                       }
+
+                   }
+
+
+               });
+
+           }
+           //刪除方法結束
+
+           //更新方法開始
+           function updateMember(){
+               $.ajax({
+                   url: "/updateCandidate",
+                   data: JSON.stringify(updateMemberVin), //這邊放整個要傳入後端的物件
+                   type: "POST",
+                   dataType: "json",
+                   contentType: "application/json;charset=utf-8",
+                   success: function(data) {
+                       console.log(data)
+                       if(data.isSuccess=="Y"){
+                           alert(data.errorMsg);
+                           getAllMember();
+                       }else{
+                           alert(data.errorMsg);
+                       }
+
+                   }
+
+
+               });
+           }
+
+       });
+
+
+
+   </script>
+
+</head>
+<body>
+    
+
+ <!-- 導覽開始 -->
+    <div id="header"></div>
+ <!-- 導覽結束 -->
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: white;">
+          <li class="breadcrumb-item"><a href="#">招募管理</a></li>
+          <li class="breadcrumb-item active" aria-current="page">求職者管理</li>
+        </ol>
+      </nav>
+    <!-- 表格開始 -->
+    <div class="container">
+          
+          <div class="row">   
+            <div class="col-1"></div>
+            <div class="col-10">
+                <div class="row" style="margin-bottom:20px">
+                    <div class="col-2"></div>
+                    <div class="col-8 " style="text-align: center;font-size: large;">求職者管理</div>
+                    <div class="col-2"><button type="button" class="btn btn-info" id="plusBtn" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i>新增求職者</button></div>
+                </div>
+
+                <table class="table table-striped" style="margin-top:10px;">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">性別</th>
+                        <th scope="col">年齡</th>
+                        <th scope="col">主要技能</th>
+                        <th scope="col">次要技能</th>
+                        <th scope="col">期望工作地點</th>
+                        <th scope="col">同意派遣至客戶端</th>
+                        <th scope="col">更新時間</th>
+                        <th scope="col">修改</th>
+                        <th scope="col">刪除</th>
+                    </tr>
+                    </thead>
+                    <tbody id="candidates">
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>@mdo</td>
+                        <td>@mdo</td>
+                        <td>@mdo</td>
+                
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-1"></div>
+        </div> 
+    </div>
+
+
+ 
+    <!-- 表格結束 -->
+    <!-- 彈出表單 -->
+         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+             <div class="modal-dialog" role="document">
+                 <div class="modal-content">
+                     <div class="modal-header">
+                         <h5 class="modal-title" id="exampleModalLabel">新增求職者</h5>
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                         </button>
+                     </div>
+                     <div class="modal-body">
+                         <form class="row g-3">
+                             <div class="col-md-6">
+                                 <label  class="form-label">姓名</label>
+                                 <input type="text" class="form-control" id="name">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">性別</label><br>
+                                 <input  type="radio" name="gender" value="男">男
+                                 <input  type="radio" name="gender" value="女">女
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">年齡</label><br>
+                                 <input type="text" class="form-control" id="age">
+                             </div>
+                             <div class="col-md-6">
+                                 <label class="form-label">手機</label>
+                                 <input type="text" class="form-control" id="phone">
+                             </div>
+                             <div class="col-md-12">
+                                 <label class="form-label">E-mail</label>
+                                 <input type="email" class="form-control" id="email">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">學校</label>
+                                 <input type="text" class="form-control" id="school">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">科系</label>
+                                 <input type="text" class="form-control" id="major">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">公司</label>
+                                 <input type="text" class="form-control" id="company">
+                             </div>
+                             <div class="col-md-6">
+                             <label  class="form-label">薪資</label>
+                             <input type="text" class="form-control" id="salary">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">主要技能</label>
+                                 <input type="text" class="form-control" id="mainSkill">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">次要技能</label>
+                                 <input type="text" class="form-control" id="secondSkill">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">職位</label>
+                                 <input type="text" class="form-control" id="role">
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">工作年資</label>
+                                 <input type="text" class="form-control" id="seniority">
+                             </div>
+                             <div class="col-md-12">
+                                 <label  class="form-label">期望工作地點</label>
+                                 <input type="text" class="form-control" id="hopeWorkLoc">
+                             </div>
+                             <div class="col-md-12">
+                                 <label  class="form-label">備註</label>
+                                 <textarea type="text" class="form-control" id="hope"></textarea>
+                             </div>
+                             <div class="col-12">
+                                 <label  class="form-label">是否派駐至客戶端</label>
+                                 <input  type="checkbox" id="gridCheck">
+                             </div>
+                         </form>
+
+                     </div>
+                     <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                         <button type="button" class="btn btn-primary" id="confirm">確定新增</button>
+                     </div>
+                 </div>
+             </div>
+         </div>
+    <!-- 彈出表單 -->
+    <!-- 分頁開始 -->
+<!--    <nav aria-label="Page navigation example" class="page">-->
+<!--        <ul class="pagination justify-content-center">-->
+<!--          <li class="page-item disabled">-->
+<!--            <a class="page-link">上一頁</a>-->
+<!--          </li>-->
+<!--          <li class="page-item"><a class="page-link" href="#">1</a></li>-->
+<!--          <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+<!--          <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+<!--          <li class="page-item">-->
+<!--            <a class="page-link" href="#">下一頁</a>-->
+<!--          </li>-->
+<!--        </ul>-->
+<!--      </nav>-->
+
+     <div class="pagenationbox" style="display: flex;justify-content: center" >
+         <nav aria-label="Page navigation">
+             <ul class="pagination" id="pagination"></ul>
+         </nav>
+     </div>
+      <!-- 分頁結束 -->
+
+
+
+
+
+
+
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

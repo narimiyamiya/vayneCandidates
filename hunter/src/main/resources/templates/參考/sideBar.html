@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>administrator</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/administrator.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"
+    ></script>
+    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+    <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <!-- <link rel="stylesheet" href="jqueryui/style.css"> -->
+  </head>
+  <script>
+    $(function(){
+      $("#toship").click(function(){
+        window.location.href="./orderState.html"
+      });
+      $("#orderState").click(function(){
+        window.location.href="./orderState.html"
+      });
+      $("#cancel").click(function(){
+        window.location.href="./orderState.html"
+      });
+      $("#return").click(function(){
+        window.location.href="./orderState.html"
+      });
+      $("#products").click(function(){
+        // 頁面還沒做
+        // window.location.href="./products.html"
+      });
+      $("#productLaunched").click(function(){
+        window.location.href="./productLaunched.html"
+      });
+      $("#coupon").click(function(){
+        window.location.href="./coupon.html"
+      });
+      $("#analyist").click(function(){
+        window.location.href="./analyist.html"
+      });
+    })
+      
+  </script>
+
+  <body>
+        <!-- 側邊欄 -->
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+          <div class="itemCategory">
+            <span>管理員中心</span>
+          </div>
+   
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+              <button
+                class="accordion-button collapsed bigCategoryForm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseOne"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseOne"
+              >
+                <strong style="font-size: 1.25rem">物流中心</strong>
+              </button>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseOne"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingOne"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="toship">待出貨</button>
+              </div>
+            </div>
+            <!-- <div
+              id="panelsStayOpen-collapseOne"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingOne"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" name="c002">批次出貨</button>
+              </div>
+            </div> -->
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+              <button
+                class="accordion-button collapsed bigCategoryForm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseTwo"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseTwo"
+              >
+                <strong style="font-size: 1.25rem">訂單管理</strong>
+              </button>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseTwo"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingTwo"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="orderState" >我的銷售</button>
+              </div>
+            </div>
+            <div
+              id="panelsStayOpen-collapseTwo"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingTwo"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="cancel">不成立之訂單</button>
+              </div>
+            </div>
+            <div
+              id="panelsStayOpen-collapseTwo"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingTwo"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="return">退貨/退款</button>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+              <button
+                class="accordion-button collapsed bigCategoryForm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseThree"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseThree"
+              >
+                <strong style="font-size: 1.25rem">商品管理</strong>
+              </button>
+            </h2>
+   
+            <div
+              id="panelsStayOpen-collapseThree"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingThree"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="products">我的商品</button>
+              </div>
+            </div>
+            <div
+              id="panelsStayOpen-collapseThree"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingThree"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="productLaunched">新增商品</button>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+              <button
+                class="accordion-button collapsed bigCategoryForm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseFour"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseFour"
+              >
+                <strong style="font-size: 1.25rem">行銷活動</strong>
+              </button>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseFour"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingFour"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="coupon">行銷活動</button>
+              </div>
+            </div>
+            <!-- <div
+              id="panelsStayOpen-collapseFour"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingFour"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" name="c017">廣告</button>
+              </div>
+            </div> -->
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingFive">
+              <button
+                class="accordion-button collapsed bigCategoryForm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseFive"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseFive"
+              >
+                <strong style="font-size: 1.25rem">數據中心</strong>
+              </button>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseFive"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingFive"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" id="analyist">數據中心</button>
+              </div>
+            </div>
+            <!-- <div
+              id="panelsStayOpen-collapseFive"
+              class="accordion-collapse collapse samllCategoryForm"
+              aria-labelledby="panelsStayOpen-headingFive"
+            >
+              <div class="accordion-body">
+                <button class="categorybtForm" name="c024">營運表現</button>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      
+  </body>
+</html>

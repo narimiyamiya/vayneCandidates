@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>orderState</title>
+    <!-- <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    /> -->
+    <link rel="stylesheet" href="./css/orderState.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+    <script
+      type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"
+    ></script>
+    <!-- <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script> -->
+    <!-- <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script> -->
+    <!-- <link rel="stylesheet" href="jqueryui/style.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="./css/scss/all.css">
+    <link rel="stylesheet" href="./css/homepage.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>    
+  <script type="text/javascript" src="./srcipt/cookie.js"></script>
+ 
+  </head>
+  <script type="text/javascript">
+    let delitype;
+    let startDate;
+    let endDate;
+
+    $(function() {
+      $("#header").load("./backheader.html");
+      // $("#footer").load("./footer.html");
+      $("#sideBar").load("./sideBar.html");
+      checkOrderList();    
+
+      $("#deliveryWay").change(function(){
+          if($(this).val()=="all"){
+            delitype = null;
+            checkOrderList();
+          }else if($(this).val()=="7-11"){
+            delitype = "7-11取貨付款";
+            checkOrderList();
+          }else if($(this).val()=="fami"){
+            delitype = "全家取貨付款";
+            checkOrderList();
+          }else if($(this).val()=="home"){
+            delitype = "信用卡付款宅配";
+            checkOrderList();
+          }
+        
+      });
+      $("#searchDate").click(function(){
+        startDate = $("#startDate").val();
+        endDate = $("#endDate").val();
+        checkOrderList();
+      });
+    });
+
+    function editStatus(editType,orderId){
+      let BkOrderStatusVin={
+          orderId:orderId,
+          editType:editType,
+      }
+      $.ajax({
+        url: '/bunnyProject/BkOrderStatus',
+        data:JSON.stringify(BkOrderStatusVin),
+        type: "POST",
+        // dataType: "json",
+        contentType: "application/json;charset=utf-8",
+        success: function() {//data 是後台整個回傳的物件
+          alert(`更改成功`);
+          checkOrderList();  
+        }
+      });    
+    }
+
+    function checkOrderList(){
+      let getOrderByDateVin = {
+        startDate:startDate,
+        endDate:endDate
+      }
+      $.ajax({
+        url: '/bunnyProject//getOrderByDate',
+        data:JSON.stringify(getOrderByDateVin),
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json;charset=utf-8",
+        success: function(data) {//data 是後台整個回傳的物件
+          
+          $("#orderCount").text(data.obl.length + "訂單");
+          let itc = $("#form");
+          itc.html("");
+      
+          if(data.obl){
+            for(let i = 0;i<data.obl.length;i++){
+              if(delitype){
+                if(delitype == data.obl[i].delivery){
+                  itc.append(genOrderRow(data.obl[i]));
+                }
+              }else{
+                itc.append(genOrderRow(data.obl[i]));
+              }
+            }
+                  
+            $("[name='revise']").each(function(index, element){
+              $(this).change(function(){
+                editStatus($(this).val(), $(this).attr("id"));
+              });
+          
+            });
+          }
+        }
+      });
+    }
+
+    function genOrderRow(dataRow){
+      let date = new Date(dataRow.orderCreatedTime);
+      let orderHtml = `<tr style="text-align: center;">`+
+                  `<td>`+dataRow.memberId+`</td>`+
+                  `<td>`+dataRow.shipmentNo+`</td>`+
+                  `<td>`+dataRow.total+`</td>`+
+                  `<td>`;
+      if(dataRow.orderStatus =="cancel"){
+        orderHtml += "已取消訂單";
+      }else if(dataRow.orderStatus == "returns"){
+        orderHtml += "已同意退貨";
+      }else if(dataRow.orderStatus == "ing"){
+        orderHtml += "配送中";
+      }else if(dataRow.orderStatus=="applyCancel"){
+        orderHtml += "申請取消訂單中"
+      }else if(dataRow.orderStatus=="applyReturns"){
+        orderHtml += "申請退貨中"
+      }else if(dataRow.orderStatus=="finish"){
+        orderHtml += "訂單已完成"
+      }else{
+        orderHtml += "訂單處理中";
+      }              
+                    
+      orderHtml +=`</td>`+
+                  `<td>`+date.getFullYear() + `/` + (date.getMonth() + 1) + `/` + date.getDate()+`</td>`+
+                  `<td>`+dataRow.delivery+`</td>`+
+                  `<td>`+
+                    `<select name="revise" id="` + dataRow.orderId + `" >`+
+                      `<option value="edit">編輯</option>`+
+                      `<option value="cancel">同意取消訂單</option>`+
+                      `<option value="returns">同意退貨</option>`+
+                      `<option value="ing">配送中</option>`+
+                      `<option value="finish">完成訂單</option>`+
+                      // `<option value=""></option>`+
+                      // `<option value=""></option>`+
+                    `</select>`+
+                  `</td>`+
+                `</tr>`+
+            `</tbody>`;
+      return orderHtml;
+    }
+    
+    
+  </script>
+  <body>
+    <!-- 透過 jquery 載入 header -->
+    <div id="header"></div>
+
+    <!-- orderState start -->
+    <div id="main" 
+          style="display: flex;
+                flex-wrap: wrap;">
+      <div class="col-2" >
+          <div class="row ms-5 mt-2 mb-2" id="sideBar"></div>
+      </div>
+      <div class="mt-2 mb-2 container col-12" style="display: block;">
+        <div class="col-12">
+          <!-- <div class="container top mt-2 mb-3">
+            <div class="topItem" id="all">全部</div>
+            <div class="topItem" id="unpaid">尚未付款</div>
+            <div class="topItem" id="toship">待出貨</div>
+            <div class="topItem" id="shipping">配送中</div>
+            <div class="topItem" id="complete">已完成</div>
+            <div class="topItem" id="cancel">不成立</div>
+            <div class="topItem" id="return">退款/退貨</div>
+          </div> -->
+          <div class="container mid mt-3 mb-3">
+            <div class="col-2" style="text-align: right;padding-right: 10px;">訂單成立時間</div>
+            <input class="col-3" type="date" placeholder="搜尋訂單" id="startDate">
+            <input class="col-3" type="date" placeholder="搜尋訂單" id="endDate">
+            <input class="col-1 ml-1" type="button" id="searchDate" value="查詢">
+          </div>
+          <div class="container col-12 toship return" style="display: none;">
+            <div class="topItem">全部</div>
+            <div class="topItem">待處理</div>
+            <div class="topItem">已處理</div>
+          </div>
+          <div class="container col-12 cancel" style="display: none;">
+            <div class="topItem">全部</div>
+            <div class="topItem">待回應</div>
+            <div class="topItem">不成立</div>
+          </div>
+          <div class="container btm">
+            <div class="mt-2 mb-2 ml-1 col-12">
+              <div style="display: flex;">
+                <div class="col-4 p-2" id="orderCount" style="display: flex;font-size: 30px;">
+                  0訂單
+                </div>
+                <div class="col-8" style="display:flex;justify-content: flex-end;">
+                  <!-- <div>
+                    <input type="button" id="newCoupon" value="批次出貨"></div>
+                    <div style="width: 1%;"></div> -->
+                </div>
+              </div>
+              <hr>
+              <div class="table" style="border: 1px solid rgba(0, 0, 0, 0.05);">
+        
+                <table>
+                  <tr style="text-align: center;">
+                    <th class="thFormate col-1"><div>會員ID</div></th>
+                    <th class="thFormate col-3"><div>訂單編號</div></th>
+                    <th class="thFormate col-1"><div>總金額</div></th>
+                    <th class="thFormate col-1"><div>狀態</div></th>
+                    <th class="thFormate col-1"><div>下單日期</div></th>
+                <th class="thFormate col-1"><div>
+                      <select name="" id="deliveryWay">
+                        <option value="">請選擇運送方式</option>
+                        <option value="all">全部</option>
+                        <option value="home">幫你宅配</option>
+                        <option value="7-11">7-11</option>
+                        <option value="fami">全家</option>
+                      </select>
+                    </div>
+                  </th>
+                    <th class="thFormate col-1"><div>管理</div></th>
+                  </tr>
+                  <tbody id="form">
+                    <tr style="text-align: center;">
+                      <!-- <td>1</td>
+                      <td>2</td>
+                      <td>3</td>
+                      <td>4</td>
+                      <td>5</td>
+                      <td>6</td> -->
+                    </tr>
+                </tbody>
+                  
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        
+        
+        
+    </div>
+
+
+  
+
+
+
+    <!-- 透過 jquery 載入 header -->
+    <div id="footer"></div>
+  </body>
+</html>

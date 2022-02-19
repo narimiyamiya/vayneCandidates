@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>product</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/product.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css"
+    />
+    <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+  </head>
+  <script>
+    let storage = sessionStorage;
+    var result;
+    $(function () {
+      let active = false;
+      let nowPage = 1;
+      let nowCategoryMain;
+      let nowSearchText ;
+
+      $("#header").load("./header.html");
+      $("#footer").load("./footer.html");
+      $("#sideBar").load("./sideBar.html");
+
+      let state = "all";
+      let itc = $("#productContainer").html("");
+      let productNum = $("#productNum").html("");
+
+      $("#newProduct").click(function () {
+        window.location.href = "./productLaunched.html";
+      });
+      getProduct(state, nowPage);
+      // showProduct(data,state);
+      $(".loadData").click(function(){
+        state = $(this).attr("state");
+        $("#productContainer").empty();
+        $("#productNum").empty();
+        $("#page").empty();
+        nowPage = 1;
+        showProduct(result, state, nowPage);
+      });
+      $("#searchByItemName").keyup(function(){
+        nowSearchText = $(this).val();
+        filteredData = searchTableByItemName(result,nowSearchText);
+        $("#productContainer").empty();
+        $("#productNum").empty();
+        $("#page").empty();
+        showProduct(filteredData,state,nowPage);
+      })
+      $("#searchByCategoryMain").keyup(function(){
+        nowCategoryMain = $(this).val();
+        filteredData = searchTableByCategoryMain(result,nowCategoryMain);
+        $("#productContainer").empty();
+        $("#productNum").empty();
+        $("#page").empty();
+        showProduct(filteredData,state,nowPage);
+      })
+      
+      function searchTableByItemName(data,selectItemName){
+        var filteredData = {
+          products:[]
+        };
+        for(let i = 0;i < data.products.length;i++){
+          value = selectItemName;
+          let itemName = data.products[i].itemName;//itemName 在debug有資料 跑完undefined 我不懂
+          if(itemName.includes(value)){
+            filteredData.products.push(data.products[i])
+          }
+        }
+        return filteredData;
+      }
+      function searchTableByCategoryMain(data,selectCategory){
+        var filteredData = {
+          products:[]
+        };
+        for(let i = 0;i < data.products.length;i++){
+          value = selectCategory;
+          let categoryMain = data.products[i].categoryMain;//categoryMain 在debug有資料 跑完undefined 我不懂
+          if(categoryMain.includes(value)){
+            filteredData.products.push(data.products[i])
+          }
+        }
+        return filteredData;
+      }
+
+      function getProduct(state, selectPage) {
+        
+        $.ajax({
+          url: "/bunnyProject/loadProduct",
+          type: "POST",
+          dataType: "json",
+          // data: JSON.stringify(memberId), //這邊放整個要傳入後端的物件
+          contentType: "application/json;charset=utf-8",
+          success: function (data) {
+            result = data;
+            showProduct(result, state, selectPage);
+            
+          },
+
+          error: function () {
+            alert("載入商品失敗");
+          },
+        });
+      }
+
+      function showProduct(data, state, selectPage) {
+        if (data.products != null && data.products.length > 0) {
+          newtrtd(data, state, selectPage);
+        } else {
+          itc.append(
+            `<tr>
+            <td colspan="5" style="height: 400px;text-align: center;letter-spacing: 1em;font-size: 30px;">暫無商品</td>
+          </tr>`
+          );
+        }
+      }
+
+      function newtrtd(data, state, selectPage) {
+        let arr =[];
+        let productNumInOnePage = 30;
+        let pageNumber = 0;
+        let pageRemain = 0;
+        let beginNo = 0;
+        let endNo = 0;
+        let no = 0;
+        beginNo = (selectPage - 1) * productNumInOnePage;
+        endNo = selectPage * productNumInOnePage;
+
+        if (state == "all") {
+          for (let i = 0; i < data.products.length; i++) {
+            no++;
+          }
+          //data 是後台整個回傳的物件
+          //計算有幾頁
+          pageNumber = Math.floor(no / productNumInOnePage);
+          pageRemain = no % productNumInOnePage;
+          if (pageRemain != 0) {
+            pageNumber += 1;
+          }
+          if (no < endNo) {
+            endNo = no;
+          }
+
+          for (let i = beginNo; i < endNo; i++) {
+            appendProduct(data,i);
+          }
+          //data 是後台整個回傳的物件
+          //計算有幾頁
+
+          //利用多個append產生分頁按鈕
+          let pages = $("#page").html("");
+          pages.append(
+            `<li class="page-item">` +
+              ` <input type="button" class="page-link" aria-label="Previous" id="previous" value="&laquo;"></li>`
+          );
+          for (let z = 1; z <= pageNumber; z++) {
+            if (nowPage == z) {
+              pages.append(
+                `<li class="page-item" ><input type="button" class="page-link" style="background-color:#6EB4DC;color:white;" value="${z}"></li>`
+              );
+            } else {
+              pages.append(
+                `<li class="page-item"><input type="button" class="page-link" value="${z}"></li>`
+              );
+            }
+          }
+          pages.append(
+            `<li class="page-item">` +
+              `<input type="button" class="page-link" aria-label="Next" id="next" value="&raquo;"></li>`
+          );      
+        
+          productNum.append(`<span class="remove">` + no + `件商品</span>`);
+        }else if (state == "active") {
+          for (let x = 0; x < data.products.length; x++) {
+            if(data.products[x].state == "active"){
+              arr.push(x)
+              no++;
+            }
+          }
+              //data 是後台整個回傳的物件
+              //計算有幾頁
+              pageNumber = Math.floor(no / productNumInOnePage);
+              pageRemain = no % productNumInOnePage;
+              if (pageRemain != 0) {
+                pageNumber += 1;
+              }
+              if (no < endNo) {
+                endNo = no;
+              }
+    
+              for (let y = beginNo; y < endNo; y++) {
+                appendProduct(data,arr[y]);
+              }
+              //data 是後台整個回傳的物件
+              //計算有幾頁
+    
+              //利用多個append產生分頁按鈕
+              let pages = $("#page").html("");
+              pages.append(
+                `<li class="page-item">` +
+                  ` <input type="button" class="page-link" aria-label="Previous" id="previous" value="&laquo;"></li>`
+              );
+              for (let z = 1; z <= pageNumber; z++) {
+                if (nowPage == z) {
+                  pages.append(
+                    `<li class="page-item" ><input type="button" class="page-link" style="background-color:#6EB4DC;color:white;" value="${z}"></li>`
+                  );
+                } else {
+                  pages.append(
+                    `<li class="page-item"><input type="button" class="page-link" value="${z}"></li>`
+                  );
+                }
+              }
+              pages.append(
+                `<li class="page-item">` +
+                  `<input type="button" class="page-link" aria-label="Next" id="next" value="&raquo;"></li>`
+              );
+
+          productNum.append(`<span class="remove">` + no + `件商品</span>`);
+
+        }else if (state == "soldOut") {
+          for (let x = 0; x < data.products.length; x++) {
+            if(data.products[x].stock == 0 && data.products[x].state == "soldOut"){
+              arr.push(x)
+              no++;
+            }
+          }
+              //data 是後台整個回傳的物件
+              //計算有幾頁
+              pageNumber = Math.floor(no / productNumInOnePage);
+              pageRemain = no % productNumInOnePage;
+              if (pageRemain != 0) {
+                pageNumber += 1;
+              }
+              if (no < endNo) {
+                endNo = no;
+              }
+    
+              for (let y = beginNo; y < endNo; y++) {
+                appendProduct(data,arr[y]);
+              }
+              //data 是後台整個回傳的物件
+              //計算有幾頁
+    
+              //利用多個append產生分頁按鈕
+              let pages = $("#page").html("");
+              pages.append(
+                `<li class="page-item">` +
+                  ` <input type="button" class="page-link" aria-label="Previous" id="previous" value="&laquo;"></li>`
+              );
+              for (let z = 1; z <= pageNumber; z++) {
+                if (nowPage == z) {
+                  pages.append(
+                    `<li class="page-item" ><input type="button" class="page-link" style="background-color:#6EB4DC;color:white;" value="${z}"></li>`
+                  );
+                } else {
+                  pages.append(
+                    `<li class="page-item"><input type="button" class="page-link" value="${z}"></li>`
+                  );
+                }
+              }
+              pages.append(
+                `<li class="page-item">` +
+                  `<input type="button" class="page-link" aria-label="Next" id="next" value="&raquo;"></li>`
+              );
+
+          productNum.append(`<span class="remove">` + no + `件商品</span>`);
+
+        }else if (state == "unlaunched") {
+          for (let x = 0; x < data.products.length; x++) {
+            if(data.products[x].state == "unlaunched"){
+              arr.push(x);
+              no++;
+            }
+          }
+              //data 是後台整個回傳的物件
+              //計算有幾頁
+              pageNumber = Math.floor(no / productNumInOnePage);
+              pageRemain = no % productNumInOnePage;
+              if (pageRemain != 0) {
+                pageNumber += 1;
+              }
+              if (no < endNo) {
+                endNo = no;
+              }
+    
+              for (let y = beginNo; y < endNo; y++) {
+                appendProduct(data,arr[y]);
+              }
+              //data 是後台整個回傳的物件
+              //計算有幾頁
+    
+              //利用多個append產生分頁按鈕
+              let pages = $("#page").html("");
+              pages.append(
+                `<li class="page-item">` +
+                  ` <input type="button" class="page-link" aria-label="Previous" id="previous" value="&laquo;"></li>`
+              );
+              for (let z = 1; z <= pageNumber; z++) {
+                if (nowPage == z) {
+                  pages.append(
+                    `<li class="page-item" ><input type="button" class="page-link" style="background-color:#6EB4DC;color:white;" value="${z}"></li>`
+                  );
+                } else {
+                  pages.append(
+                    `<li class="page-item"><input type="button" class="page-link" value="${z}"></li>`
+                  );
+                }
+              }
+              pages.append(
+                `<li class="page-item">` +
+                  `<input type="button" class="page-link" aria-label="Next" id="next" value="&raquo;"></li>`
+              );
+
+          productNum.append(`<span class="remove">` + no + `件商品</span>`);
+      }
+      $(".page-link").each(function (index,element) {
+            $(this).click(function () {
+              if ($(this).attr("id") == "previous") {
+                if (nowPage > 1) {
+                  nowPage = nowPage - 1;
+                }
+              } else if ($(this).attr("id") == "next") {
+                if (nowPage < pageNumber) {
+                  nowPage++;
+                }
+              } else {
+                nowPage = $(this).val();
+              }
+              $("#productContainer").empty();
+              $("#productNum").empty();
+              $("#page").empty();
+              $("html,body").animate({scrollTop:'0px'},1)
+              showProduct(result, state, nowPage);
+            });
+          });
+
+
+        // $("#toShoppingPage").click(function(){})
+        $("#update").click(function(){
+          storage.setItem("itemIdFromProduct",$(this).attr("data-itemNo"))
+          // storage.setItem("data",data)
+          window.location.href="./productInfo.html"
+        })
+
+        //上架按鈕註冊
+        $("#active").click(function(){
+          itemName = $(this).attr('data-itemName')
+          // console.log( confirm(`確定要刪除
+          // 商品:${itemName}`));
+          if(confirm(`確定要上架
+          商品:${itemName}?`)){
+            let productBean = {
+              itemName:$(this).attr('data-itemName')
+            }
+            $.ajax({
+              url: "/bunnyProject/activeProduct",
+              type: "POST",
+              // dataType: "json",
+              data: JSON.stringify(productBean), //這邊放整個要傳入後端的物件
+              contentType: "application/json;charset=utf-8",
+              success: function () {
+                alert('上架商品成功')
+                location.reload()
+              },
+              
+              error: function () {
+                alert("上架商品失敗");
+              },
+            });
+
+          }
+
+        })
+
+        //刪除商品按鈕
+        $("#del").click(function(){
+          itemName = $(this).attr('data-itemName')
+          // console.log( confirm(`確定要刪除
+          // 商品:${itemName}`));
+          if(confirm(`確定要刪除
+          商品:${itemName}?`)){
+            let productBean = {
+              itemName:$(this).attr('data-itemName')
+            }
+
+            $.ajax({
+              url: "/bunnyProject/delProduct",
+              type: "POST",
+              // dataType: "json",
+              data: JSON.stringify(productBean), //這邊放整個要傳入後端的物件
+              contentType: "application/json;charset=utf-8",
+              success: function () {
+                alert('刪除商品成功')
+                location.reload()
+              },
+              
+              error: function () {
+                alert("刪除商品失敗");
+              },
+            });
+
+          }
+        })
+
+        $("#unlaunched").click(function(){
+          itemName = $(this).attr('data-itemName')
+          // console.log( confirm(`確定要刪除
+          // 商品:${itemName}`));
+          if(confirm(`確定要下架
+          商品:${itemName}?`)){
+            let productBean = {
+              itemName:$(this).attr('data-itemName')
+            }
+            $.ajax({
+              url: "/bunnyProject/unlauchedProduct",
+              type: "POST",
+              // dataType: "json",
+              data: JSON.stringify(productBean), //這邊放整個要傳入後端的物件
+              contentType: "application/json;charset=utf-8",
+              success: function () {
+                alert('下架商品成功')
+                location.reload()
+              },
+              
+              error: function () {
+                alert("下架商品失敗");
+              },
+            });
+
+          }
+        })
+
+    }
+    function appendProduct(data,length){
+      if(data.products[length].state == "active"){
+      itc.append(
+                  `<tr style="text-align: center;" class="remove"><td style="text-align:start">
+                  <div class="container" style="margin:0px 10px">
+                    <img src="` +
+                    data.products[length].imageUrl +
+                    `" style="width:40px;height:40px;">` +
+                    data.products[length].itemName +
+                    `</td>
+                    </div>
+                    <td>`+
+                    data.products[length].categoryMain +
+                      `</td>
+                    <td>` +
+                    data.products[length].itemOption +
+                    `</td>
+                      <td>` +
+                    data.products[length].stock +
+                    `</td>
+                        <td>` +
+                    0 +
+                    `</td>
+                        <td>` +
+                    data.products[length].state +
+                    `</td>
+                            <td>
+                            <button id="toShoppingPage" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">預覽</button>
+                            <button id="update" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">編輯</button>
+                            <button id="unlaunched"  data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">下架</button>
+                            <button id="del" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">刪除</button>
+                            </td> 
+                            </tr>`
+                );
+      }
+      if(data.products[length].state == "unlaunched"){
+      itc.append(
+                  `<tr style="text-align: center;" class="remove"><td style="text-align:start">
+                  <div class="container" style="margin:0px 10px">
+                    <img src="` +
+                    data.products[length].imageUrl +
+                    `" style="width:40px;height:40px;">` +
+                    data.products[length].itemName +
+                    `</td>
+                    </div>
+                    <td>`+
+                    data.products[length].categoryMain +
+                      `</td>
+                    <td>` +
+                    data.products[length].itemOption +
+                    `</td>
+                      <td>` +
+                    data.products[length].stock +
+                    `</td>
+                        <td>` +
+                    0 +
+                    `</td>
+                        <td>` +
+                    data.products[length].state +
+                    `</td>
+                            <td>
+                            <button id="toShoppingPage" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">預覽</button>
+                            <button id="update" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">編輯</button>
+                            <button id="active" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">上架</button>
+                            <button id="del" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">刪除</button>
+                            </td> 
+                            </tr>`
+                );
+      }
+      if(data.products[length].state == "soldOut"){
+      itc.append(
+                  `<tr style="text-align: center;" class="remove"><td style="text-align:start">
+                  <div class="container" style="margin:0px 10px">
+                    <img src="` +
+                    data.products[length].imageUrl +
+                    `" style="width:40px;height:40px;">` +
+                    data.products[length].itemName +
+                    `</td>
+                    </div>
+                    <td>`+
+                    data.products[length].categoryMain +
+                      `</td>
+                    <td>` +
+                    data.products[length].itemOption +
+                    `</td>
+                      <td>` +
+                    data.products[length].stock +
+                    `</td>
+                        <td>` +
+                    0 +
+                    `</td>
+                        <td>` +
+                    data.products[length].state +
+                    `</td>
+                            <td>
+                            <button id="toShoppingPage" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">預覽</button>
+                            <button id="update" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">編輯</button>
+                            <button id="del" data-itemName="${data.products[length].itemName}" data-itemNo="${data.products[length].itemNo}" style="background-color:#83a9e1;color:white;border: 0px;border-radius:5px;">刪除</button>
+                            </td> 
+                            </tr>`
+                );
+      }          
+    }
+
+    });
+  </script>
+  <body>
+    <!-- 透過 jquery 載入 header -->
+    <div id="header"></div>
+
+    <!-- ShoppingItem start -->
+    <div
+      id="main "
+      style="display: flex; flex-wrap: wrap; justify-content: space-evenly"
+    >
+      <div class="col-2">
+        <div class="row ms-5 mt-2 mb-2" id="sideBar"></div>
+      </div>
+      <!-- 商品顯示 -->
+      <div class="container mt-2 mb-2 ml-1 col-9" style="flex-wrap: wrap;">
+        <div class="coupontitle container col-12" style="justify-self: center">
+          商品
+        </div>
+        <div class="container col-12" style="flex-wrap: wrap">
+          <div class="col-12 toolItemRow" style="display: flex">
+            <div class="toolItem">
+              <input type="button" value="全部" class="loadData" state="all" />
+              <!-- <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off">
+              <label class="btn btn-secondary" for="option1">全部</label> -->
+            </div>
+            <div class="toolItem">
+              <input type="button" value="架上商品" class="loadData" state="active"/>
+              <!-- <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off">
+              <label class="btn btn-secondary" for="option2">架上商品</label> -->
+            </div>
+            <div class="toolItem">
+              <input type="button" value="已售完" class="loadData" state="soldOut"/>
+              <!-- <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off">
+              <label class="btn btn-secondary" for="option3">已售完</label> -->
+            </div>
+            <div class="toolItem">
+              <input type="button" value="未上架" class="loadData" state="unlaunched"/>
+              <!-- <input type="radio" class="btn-check" name="options" id="option4" autocomplete="off">
+              <label class="btn btn-secondary" for="option4">未上架</label> -->
+            </div>
+          </div>
+          <div class="container mt-2" style="font-size: 20px">
+            <div class="col-6">
+              <div class="container">
+                <div class="col-2">商品名稱</div>
+                <div class="col-10">
+                  <input type="text" id="searchByItemName"style="width: 100%" />
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="container">
+                <div class="col-2">類別名稱</div>
+                <div class="col-10">
+                  <input type="text" id="searchByCategoryMain" style="width: 100%" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="col-4 mt-2"
+            style="display: flex; justify-content: flex-start"
+          >
+            <div>
+              <h2 id="productNum"></h2>
+            </div>
+            <div style="width: 1%"></div>
+          </div>
+          <div
+            class="col-8 mt-2"
+            style="
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+            "
+          >
+            <div>
+              <input type="button" id="newProduct" value="+新增商品" />
+            </div>
+            <div style="width: 1%"></div>
+          </div>
+        </div>
+        <hr />
+        <div
+          class="table productContainer"
+          style="border: 1px solid rgba(0, 0, 0, 0.05)"
+        >
+          <table class="col-12" id="newTbody">
+            <thead>
+              <tr style="text-align: center; justify-content: space-evenly">
+                <th class="thFormate col-1"><div>商品名稱</div></th>
+                <th class="thFormate col-1"><div>類別</div></th>
+                <th class="thFormate col-1"><div>規格</div></th>
+                <th class="thFormate col-1"><div>商品數量</div></th>
+                <th class="thFormate col-1"><div>已售出</div></th>
+                <th class="thFormate col-1"><div>狀態</div></th>
+                <th class="thFormate col-1"><div>操作</div></th>
+              </tr>
+            </thead>
+            <tbody id="productContainer" style="overflow-y: scroll;"></tbody>
+          </table>
+        </div>
+        <!-- pageNum  start-->
+        <div class="page container" style="justify-content: center;">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center" id="page"></ul>
+          </nav>
+        </div>
+        <!-- pageNum  start-->
+      </div>
+    </div>
+
+    <!-- 透過 jquery 載入 header -->
+    <div id="footer"></div>
+
+  </body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style_choose.css">
+    <link rel="stylesheet" href="./css/footer.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+    <script type="text/javascript" src="./srcipt/cookie.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $("#header").load("./header.html");
+        $("#footer").load("./footer.html");
+      });
+    </script>
+
+    <title>選擇付款方式</title>
+</head>
+
+<body>
+    <!-- 透過 jquery 載入 header -->
+	<div id="header"></div>
+
+    <div class="container mt-5 ">
+        <div class="row justify-content-center">
+          <div class="top col-12">
+            <button class="btn ra active">
+              <p class="s1">step1<br />確認商品資訊</p>
+            </button>
+            <span class="arrow active align-middle">
+              <i class="fas fa-arrow-circle-right fa-2x mx-2"></i>
+            </span>
+            <button class="btn ra active">
+              <p class="s2">Step2<br />填寫訂購資料</p>
+            </button>
+            <span class="arrow active align-middle">
+              <i class="fas fa-arrow-circle-right fa-2x mx-2"></i>
+            </span>
+            <button class="btn ra">
+              <p class="s3">step3<br />選擇付款方式</p>
+            </button>
+            <span class="arrow align-middle">
+              <i class="fas fa-arrow-circle-right fa-2x mx-2"></i>
+            </span>
+            <button class="btn rar">
+              <p class="s4">step4<br />完成訂購</p>
+            </button>
+          </div>
+         </div>
+        </div>
+
+        
+    <div style="margin: 30px 0px 0px 120px;">
+        <div class="container">
+            <div class="odd">
+                <p id="od">請選擇付款方式</p>
+            </div>
+            <hr>
+            <div class="mb-3 mt-4">
+                    <span id="tf">信用卡付款</span>
+                    <input type="radio" name="location" value="credit" style="width: 250px;">
+                    <span id="tf">滿1000元免運費</span><br>
+                    <hr>
+            </div>
+            <div>
+                <span id="tf">超商取貨(7-11)</span>
+                <input type="radio" name="location" value="seven" style="width: 132px;">
+                <span style="margin-left: 58px;" id="tf">滿399元免運費</span><br>
+                <img src="./image/791px-7-eleven_logo.svg.png" width="55px" style="margin-left: 40px;">
+                <button id="choose">選擇門市</button>
+                <hr>
+            </div>
+            <div>
+                <span id="tf">超商取貨(全家)</span>
+                <input type="radio" name="location" value="family" style="width: 165px;">
+                <span style="margin-left: 40px;" id="tf">滿399元免運費</span><br>
+                <img src="./image/w768.png" width="55px" style="margin-left: 40px;">
+                <button id="choose">選擇門市</button>
+                <hr>
+            </div>
+            <div id="check">
+            <a href="./Order_finish.html"><button id="checkb">確認結帳</button></a>
+            </div>
+        </div>
+    </div>
+    <!-- 透過 jquery 載入 header -->
+    <div id="footer"></div>
+</body>
+<script>
+$(function() {
+  $("#header").load("./header.html");
+  $("#footer").load("./footer.html");
+  // $.ajax({
+  //   url: '/bunnyProject/loginInit',
+	// 	type: "POST",
+	// 	dataType: "json",
+	// 	contentType: "application/json;charset=utf-8",
+	// 	success: function() {//data 是後台整個回傳的物件
+  //     window.location.href = "./Order_finish.html";
+  //   },
+	// 	error: function() {
+	// 		alert('error');
+	// 	}
+	// });
+		
+  
+})
+</script>
+</html>

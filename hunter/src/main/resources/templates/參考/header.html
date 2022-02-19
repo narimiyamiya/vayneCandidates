@@ -1,0 +1,127 @@
+<link rel="stylesheet" href="./css/header.css"/>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+<script type="text/javascript" src="./srcipt/cookie.js"></script>
+<script type="text/javascript">
+    //# sourceURL=header.html
+    $(function() {
+        console.log("header is loaded");
+        
+        $.ajax({
+            url: '/bunnyProject/checkIsLogined',
+            type: "POST",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function(data) {//data 是後台整個回傳的物件
+               if(data.logined){                  
+                    $("#toMemberCenterBtn").show();
+                    $("#toLoginBtn").hide();
+                    $("#memberHeaderImg").attr("src",data.base64MemberImage);
+               }else{
+                    $("#toMemberCenterBtn").hide();
+                    $("#toLoginBtn").show();
+               }
+            },
+            error: function() {
+                alert('error');
+            }
+        });
+
+        $("#logoutBtn").click(function(){
+
+			$.ajax({
+				url: '/bunnyProject/logout',
+				type: "POST",
+				dataType: "json",
+				contentType: "application/json;charset=utf-8",
+				success: function(data) {//data 是後台整個回傳的物件
+					alert('已成功登出');
+                    $("#toMemberCenterBtn").hide();
+                    $("#toLoginBtn").show();
+				},
+				error: function() {
+					alert('error');
+				}
+			});
+		});
+
+        
+        $("#contactus").click(function() {
+            createCookie("moveTocontactUs");
+			window.location.href = "./homepage.html";
+        });
+       
+
+    });
+</script>
+<div class="container-fluid">
+    <div class="row header" >
+        <div class="col-4">
+            <div class="row align-items-center " style="text-align: center;">                        
+                <span class="col-4">
+            
+                    <span>
+                        <a href="./homepage.html">
+                            <img  id="bunnyhead" src="./image/headerImg/bunnyhead.png" style="margin-bottom:10px;">
+                        </a>
+                        <br>
+                        <a  href="./homepage.html">首頁</a>
+                    </span>
+                </span>
+                <span class="col-4 ">
+                    <a href="#" id="contactus">聯絡我們
+                        <i class="fab fa-facebook-square fa-lg"></i>
+                        <i class="fab fa-line fa-lg"></i>
+                        <i class="fas fa-envelope-open-text"></i>
+                    </a>
+                    </span>
+                <span class="col-4">
+                    <a href="./shoppingPage.html">購物商城</a> 
+                </span>
+            </div>
+        </div>
+        <div class="col-4" style="text-align: center;"> 
+            <span class="bunny_left" style="font-size: 40px;">BUNNY</span> 
+            <span class="logo">
+        <a href="./shoppingPage.html">
+            <img id="logoImg" src="./image/headerImg/bunnypen.png">
+        </a>    
+            </span>
+            <span class="bunny_rihgt" style="font-size:40px;">幫你文具</span> 
+        </div> 
+        <div class="col-4">
+            <div class="row ">
+                
+                <span  class="col-3 rbtn">
+                    <a href="./Order_list.html"><i class="fas fa-clipboard-list fa-lg"></i> 訂單查詢</a>
+                </span>
+                <span  class="col-3 rbtn">
+                    <a  href="./like_list.html"><i class="fab fa-gratipay" style="font-size: 25px;"></i> 收藏商品</i></a>
+                </span>
+                <span id="toLoginBtn" class="col-3 rbtn">
+                    <a href="./login.html" ><i class="far fa-user-circle fa-lg"></i> 會員登入</a>
+                </span>
+                <span id="toMemberCenterBtn" class="col-6 rbtn" style="display: none;">
+                  <a href="./member_info.html" >會員中心</a>
+                  <span style="display: inline-table;text-align: center;margin-left: -15px;margin-bottom: -40px;">
+                    <img id="memberHeaderImg" src="./image/loginImg/female.png" alt="登入後頭像" style="width: 50px;margin-top: -50px;margin-bottom: -40px;margin-left: 20px;">
+                    <br>
+                    <a  id="logoutBtn" style="font-size: 14px;margin-left: 20px;" class="logout">登出</a>                 
+                </span>
+                </span>
+
+                <div class="col-4"></div>
+                <div class="col-2 " style="margin-left: -8px;">
+                
+                        <a href="./shoppinglist.html">
+                        <i
+                        class="fas fa-shopping-bag"
+                        style="font-size:40px; color:#104DA8;"
+                    ></i
+                    >
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
