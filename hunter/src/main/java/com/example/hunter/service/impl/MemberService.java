@@ -10,8 +10,10 @@ public interface MemberService {
 
     public List<memberBean> getMemberByPage(PagingBean pb);
 
-    public memberBean save(memberBean mb);
+    public int save(memberBean mb);
 
     public void delete(int memberId);
+
+    public int update(memberBean mb);
 
 }

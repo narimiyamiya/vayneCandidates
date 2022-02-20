@@ -27,6 +27,8 @@
 
            let allMemberList;
            let thisMemberId;
+           let isUpdate;
+           let thisMember;
            getAllMember();
 
            function getAllMember(){
@@ -79,8 +81,8 @@
                        ` <tr>` +
                        `<th scope="row">`+ number +`</th>` +
                        `<td>` + allMemberList[i].name + `</td>` +
-                       `<td>` + allMemberList[i].age + `</td>` +
                        `<td>` + allMemberList[i].gender + `</td>` +
+                       `<td>` + allMemberList[i].age + `</td>` +
                        `<td>` + allMemberList[i].mainSkill + `</td>` +
                        `<td>` + allMemberList[i].secondSkill + `</td>` +
                        `<td>` + allMemberList[i].hopeWorkLoc + `</td>` +
@@ -107,59 +109,138 @@
                $("[name='update']").each(function (index, element)  {
 
                    $(this).click(function () {
+                       isUpdate = true;
                        thisMemberId = $(this).attr("thisMemberId") ;
-
-                       let updateMemberVin ={
-                           memberId:thisMemberId
+                       $('#exampleModal').modal('show');
+                       $("#exampleModalLabel").text("更新求職者資訊");
+                       $("#confirm").text("確定更新");
+                       for(let i = 0;i<allMemberList.length;i++){
+                           if(allMemberList[i].memberId==thisMemberId){
+                               //給一個空間暫存要準備來把前端前面就撈出來的值放入表單中
+                                thisMember = allMemberList[i];
+                                break;
+                           }
                        }
+                        $("#name").val(thisMember.name);
+                        if(thisMember.gender == "男"){
+                            $('input[name=gender][value="男"]').click();
+                        }else{
+                            $('input[name=gender][value="女"]').click();
+                        }
+                        // $('input[name=gender]:checked').val(thisMember.gender)
+                        $("#age").val(thisMember.age);
+                        $("#phone").val(thisMember.phone);
+                        $("#email").val(thisMember.email);
+                        $("#school").val(thisMember.school);
+                        $("#major").val(thisMember.major);
+                        $("#company").val(thisMember.company);
+                        $("#salary").val(thisMember.salary);
+                        $("#mainSkill").val(thisMember.mainSkill);
+                        $("#secondSkill").val(thisMember.secondSkill);
+                        $("#role").val(thisMember.role);
+                        $("#seniority").val(thisMember.seniority);
+                        $("#hopeWorkLoc").val(thisMember.hopeWorkLoc);
+                        $("#hope").val(thisMember.hope);
+                        if(thisMember.client=="是"){
+                            $("input[type='checkbox']").prop('checked', true);
+                        }else {
+                            $("input[type='checkbox']").prop('checked', false);
+                        }
 
 
                    });
                });
 
            }
+           $("#plusBtn").click(function (){
+               $('input[name=gender]').prop('checked',false);
+               $("#name").val("");
+               $("#age").val("");
+               $("#phone").val("");
+               $("#email").val("");
+               $("#school").val("");
+               $("#major").val("");
+               $("#company").val("");
+               $("#salary").val("");
+               $("#mainSkill").val("");
+               $("#secondSkill").val("");
+               $("#role").val("");
+               $("#seniority").val("");
+               $("#hopeWorkLoc").val("");
+               $("#hope").val("");
+               $("input[type='checkbox']").prop('checked', null);
+           });
             //新增求職者方法開始
            $("#confirm").click(function () {
-               $('#exampleModal').modal('hide');
-               let AddMemberInfoVin ={
-                   name:$("#name").val(),
-                   gender:$('input[name=gender]:checked').val(),
-                   age:$("#age").val(),
-                   phone:$("#phone").val(),
-                   email:$("#email").val(),
-                   school:$("#school").val(),
-                   major:$("#major").val(),
-                   company:$("#company").val(),
-                   salary:$("#salary").val(),
-                   mainSkill:$("#mainSkill").val(),
-                   secondSkill:$("#secondSkill").val(),
-                   role:$("#role").val(),
-                   seniority: $("#seniority").val(),
-                   hopeWorkLoc:$("#hopeWorkLoc").val(),
-                   hope:$("#hope").val(),
-                   client:$("input[type='checkbox']").val()?"是":"否"
-               }
-
-               $.ajax({
-                   url: "/addCandidate",
-                   data: JSON.stringify(AddMemberInfoVin), //這邊放整個要傳入後端的物件
-                   type: "POST",
-                   dataType: "json",
-                   contentType: "application/json;charset=utf-8",
-                   success: function(data) {
-                    console.log(data)
-                    if(data.isSuccess=="Y"){
-                        alert(data.errorMsg);
-                        getAllMember();
-                    }else{
-                        alert(data.errorMsg);
-
-                    }
+               if(isUpdate){
+                   let UpdateMemberVin = {
+                       memberId: thisMemberId,
+                       name:$("#name").val(),
+                       gender:$('input[name=gender]:checked').val(),
+                       age:$("#age").val(),
+                       phone:$("#phone").val(),
+                       email:$("#email").val(),
+                       school:$("#school").val(),
+                       major:$("#major").val(),
+                       company:$("#company").val(),
+                       salary:$("#salary").val(),
+                       mainSkill:$("#mainSkill").val(),
+                       secondSkill:$("#secondSkill").val(),
+                       role:$("#role").val(),
+                       seniority: $("#seniority").val(),
+                       hopeWorkLoc:$("#hopeWorkLoc").val(),
+                       hope:$("#hope").val(),
+                       client:$("input[type='checkbox']").val()?"是":"否",
 
                    }
 
+               updateMember(UpdateMemberVin);
 
-               });
+               }else{
+
+                   let AddMemberInfoVin ={
+                       name:$("#name").val(),
+                       gender:$('input[name=gender]:checked').val(),
+                       age:$("#age").val(),
+                       phone:$("#phone").val(),
+                       email:$("#email").val(),
+                       school:$("#school").val(),
+                       major:$("#major").val(),
+                       company:$("#company").val(),
+                       salary:$("#salary").val(),
+                       mainSkill:$("#mainSkill").val(),
+                       secondSkill:$("#secondSkill").val(),
+                       role:$("#role").val(),
+                       seniority: $("#seniority").val(),
+                       hopeWorkLoc:$("#hopeWorkLoc").val(),
+                       hope:$("#hope").val(),
+                       client:$("input[type='checkbox']").val()?"是":"否"
+                   }
+
+
+                   $.ajax({
+                       url: "/addCandidate",
+                       data: JSON.stringify(AddMemberInfoVin), //這邊放整個要傳入後端的物件
+                       type: "POST",
+                       dataType: "json",
+                       contentType: "application/json;charset=utf-8",
+                       success: function(data) {
+                           console.log(data)
+                           if(data.isSuccess=="Y"){
+                               alert(data.errorMsg);
+                               $('#exampleModal').modal('hide');
+                               getAllMember();
+                           }else{
+                               alert(data.errorMsg);
+
+                           }
+
+                       }
+
+
+                   });
+               }
+
                //新增求職者方法結束
            });
 
@@ -191,7 +272,8 @@
            //刪除方法結束
 
            //更新方法開始
-           function updateMember(){
+           function updateMember(updateMemberVin){
+
                $.ajax({
                    url: "/updateCandidate",
                    data: JSON.stringify(updateMemberVin), //這邊放整個要傳入後端的物件
@@ -202,6 +284,9 @@
                        console.log(data)
                        if(data.isSuccess=="Y"){
                            alert(data.errorMsg);
+                           $('#exampleModal').modal('hide');
+                           thisMember = null;
+                           thisMemberId = null;
                            getAllMember();
                        }else{
                            alert(data.errorMsg);

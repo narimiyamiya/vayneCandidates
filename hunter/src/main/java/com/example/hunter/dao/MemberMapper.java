@@ -29,5 +29,25 @@ public interface MemberMapper {
     @Delete("delete from member where memberId = #{memberId}")
     public void delete(int memberId);
 
+    @Update("update member set " +
+            "name = #{name},"+
+            "age = #{age},"+
+            "gender = #{gender},"+
+            "phone = #{phone},"+
+            "email = #{email},"+
+            "school = #{school},"+
+            "major = #{major},"+
+            "hopeWorkLoc = #{hopeWorkLoc},"+
+            "salary = #{salary},"+
+            "company = #{company},"+
+            "mainSkill = #{mainSkill},"+
+            "secondSkill = #{secondSkill},"+
+            "role = #{role},"+
+            "seniority = #{seniority},"+
+            "hope = #{hope},"+
+            "client = #{client},"+
+            "updateTime = #{updateTime}"+
+            "where memberId = #{memberId}")
+    public int update(memberBean mb);
 
 }

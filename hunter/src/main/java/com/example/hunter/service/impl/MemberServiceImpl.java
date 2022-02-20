@@ -24,13 +24,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public memberBean save(memberBean mb){
-        memberMapper.save(mb);
-        return mb;
+    public int save(memberBean mb){
+        return memberMapper.save(mb);
+
     }
     @Override
     public void delete(int memberId){
         memberMapper.delete(memberId);
+    }
+
+    @Override
+    public  int update(memberBean mb){
+        return memberMapper.update(mb);
     }
 
 

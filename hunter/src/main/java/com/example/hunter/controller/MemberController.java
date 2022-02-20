@@ -1,11 +1,8 @@
 package com.example.hunter.controller;
 
-import com.example.hunter.model.AddMemberInfoVin;
-import com.example.hunter.model.AddMemberVout;
+import com.example.hunter.model.*;
 import com.example.hunter.bean.PagingBean;
 import com.example.hunter.bean.memberBean;
-import com.example.hunter.model.DeleteMemberVin;
-import com.example.hunter.model.DeleteMemberVout;
 import com.example.hunter.service.impl.MemberService;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,5 +94,54 @@ public class MemberController {
         return delVout;
         }
 
+    @RequestMapping("/updateCandidate")
+    public UpdateMemberVout updateMemberVout(@RequestBody UpdateMemberVin updateMemberVin){
+        UpdateMemberVout umv = new UpdateMemberVout();
+        memberBean mb = new memberBean();
+        Date date = new Date();
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        mb.setMemberId(updateMemberVin.getMemberId());
+        mb.setName(updateMemberVin.getName());
+        mb.setGender(updateMemberVin.getGender());
+        mb.setAge(updateMemberVin.getAge());
+        mb.setPhone(updateMemberVin.getPhone());
+        mb.setEmail(updateMemberVin.getEmail());
+        mb.setSchool(updateMemberVin.getSchool());
+        mb.setMajor(updateMemberVin.getMajor());
+        mb.setCompany(updateMemberVin.getCompany());
+        mb.setSalary(updateMemberVin.getSalary());
+        mb.setMainSkill(updateMemberVin.getMainSkill());
+        mb.setSecondSkill(updateMemberVin.getSecondSkill());
+        mb.setRole(updateMemberVin.getRole());
+        mb.setSeniority(updateMemberVin.getSeniority());
+        mb.setHopeWorkLoc(updateMemberVin.getHopeWorkLoc());
+        mb.setHope(updateMemberVin.getHope());
+        mb.setClient(updateMemberVin.getClient());
+//        mb.setCreateTime(ts);
+        mb.setUpdateTime(ts);
+//        memberService.save(mb);
+        System.out.println(mb);
+
+        try {
+            memberService.update(mb);
+            umv.setIsSuccess("Y");
+            umv.setErrorMsg("更新求職者資訊成功");
+        }
+        catch (Exception exception)
+        {
+            umv.setIsSuccess("N");
+            umv.setErrorMsg("更新求職者資訊失敗");
+            exception.printStackTrace();
+        }
+
+
+        return umv;
     }
+
+
+
+
+
+
+}
 
