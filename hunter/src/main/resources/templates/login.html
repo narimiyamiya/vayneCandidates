@@ -23,35 +23,67 @@
         $(function(){
             $("#header").load("header");
 
-
-            let loginVin ={
-                account:$("#account").val(),
-                password:$("#password").val()
-            }
-
-
-
-            $.ajax({
-                url: "/register",
-                data: JSON.stringify(loginVin), //這邊放整個要傳入後端的物件
-                type: "POST",
-                dataType: "json",
-                contentType: "application/json;charset=utf-8",
-                success: function(data) {
-                    console.log(data)
-                    if(data.isSuccess=="Y"){
-                        alert(data.errorMsg);
-                        $('#exampleModal').modal('hide');
-
-                    }else{
-                        alert(data.errorMsg);
-
-                    }
-
+            // 點擊註冊送前端資料至後端儲存
+            $("#register").click(function (){
+                let loginVin ={
+                    account:$("#accountR").val(),
+                    password:$("#passwordR").val()
                 }
 
 
+                $.ajax({
+                    url: "/register",
+                    data: JSON.stringify(loginVin), //這邊放整個要傳入後端的物件
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function(data) {
+                        console.log(data)
+                        if(data.isSuccess=="Y"){
+                            alert(data.errorMsg);
+
+                        }else{
+                            alert(data.errorMsg);
+
+                        }
+
+                    }
+
+
+                });
             });
+
+            $("#login").click(function(){
+                let loginVin ={
+                    account:$("#accountL").val(),
+                    password:$("#passwordL").val()
+                }
+
+                $.ajax({
+                    url: "/login",
+                    data: JSON.stringify(loginVin), //這邊放整個要傳入後端的物件
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function(data) {
+                        console.log(data)
+                        if(data.isSuccess=="Y"){
+                            alert(data.errorMsg);
+                            window.location.href = "/home";
+
+                        }else{
+                            alert(data.errorMsg);
+
+                        }
+
+                    }
+
+
+                });
+
+            });
+
+
         });
     </script>
 </head>
@@ -66,7 +98,7 @@
     </ol>
     </nav>
 <!--登入框開始-->
-    <div class="container" style="display: none">
+    <div class="container" >
         <div class="row">
             <div class="col-4" ></div>
             <div class="col-4">
@@ -74,20 +106,20 @@
                     <h2 style="text-align: center">管理者登入</h2>
                     <br>
                      帳號:
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="accountL">
                     <br>
                      密碼:
-                    <input type="password" class="form-control">
+                    <input type="password" class="form-control" id="passwordL">
                     <br>
 
-                    <button type="button" class="btn btn-info" style="margin-left: 40%">登入</button>
+                    <button type="button" class="btn btn-info" id="login" style="margin-left: 40%">登入</button>
 
                  </form>
             </div>
         </div>
     </div>
 <!--註冊框-->
-<div class="container">
+<div class="container" style="display: none">
     <div class="row">
         <div class="col-4" ></div>
         <div class="col-4">
@@ -95,13 +127,13 @@
                 <h2 style="text-align: center">註冊管理帳號</h2>
                 <br>
                 帳號:
-                <input type="text" class="form-control" id="account">
+                <input type="text" class="form-control" id="accountR">
                 <br>
                 密碼:
-                <input type="password" class="form-control" id="password">
+                <input type="password" class="form-control" id="passwordR">
                 <br>
 
-                <button type="button" class="btn btn-info" style="margin-left: 40%">註冊</button>
+                <button type="button" class="btn btn-info" id="register" style="margin-left: 40%">註冊</button>
 
             </form>
         </div>

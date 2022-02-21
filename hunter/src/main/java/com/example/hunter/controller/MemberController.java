@@ -3,7 +3,7 @@ package com.example.hunter.controller;
 import com.example.hunter.model.*;
 import com.example.hunter.bean.PagingBean;
 import com.example.hunter.bean.memberBean;
-import com.example.hunter.service.impl.MemberService;
+import com.example.hunter.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

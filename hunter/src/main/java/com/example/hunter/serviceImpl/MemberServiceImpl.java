@@ -1,8 +1,9 @@
-package com.example.hunter.service.impl;
+package com.example.hunter.serviceImpl;
 
 import com.example.hunter.bean.PagingBean;
 import com.example.hunter.bean.memberBean;
 import com.example.hunter.dao.MemberMapper;
+import com.example.hunter.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;

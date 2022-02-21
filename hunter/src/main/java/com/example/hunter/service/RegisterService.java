@@ -1,4 +1,4 @@
-package com.example.hunter.service.impl;
+package com.example.hunter.service;
 
 import com.example.hunter.model.LoginVin;
 import org.springframework.stereotype.Service;

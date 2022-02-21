@@ -1,4 +1,4 @@
-package com.example.hunter.service.impl;
+package com.example.hunter.service;
 
 import com.example.hunter.bean.PagingBean;
 import com.example.hunter.bean.memberBean;

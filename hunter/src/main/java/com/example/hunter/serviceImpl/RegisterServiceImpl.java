@@ -1,12 +1,13 @@
-package com.example.hunter.service.impl;
+package com.example.hunter.serviceImpl;
 
 import com.example.hunter.dao.LoginMapper;
 import com.example.hunter.model.LoginVin;
+import com.example.hunter.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegisterServiceImpl implements RegisterService{
+public class RegisterServiceImpl implements RegisterService {
 
     @Autowired
     LoginMapper loginMapper;
@@ -15,5 +16,7 @@ public class RegisterServiceImpl implements RegisterService{
     public int register(LoginVin loginVin){
       return   loginMapper.register(loginVin);
     };
+
+
 
 }

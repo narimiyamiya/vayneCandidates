@@ -20,6 +20,8 @@ public class LoginVout {
         this.errorMsg = errorMsg;
     }
 
+
+
     @Override
     public String toString() {
         return "LoginVout{" +
