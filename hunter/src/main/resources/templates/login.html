@@ -1,10 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="../jquery.twbsPagination.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
+<!--    <link th:href="@{~/index.css}" rel="stylesheet" type="text/css">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+
+    </style>
+
+    <script>
+        $(function(){
+            $("#header").load("header");
+
+
+            let loginVin ={
+                account:$("#account").val(),
+                password:$("#password").val()
+            }
+
+
+
+            $.ajax({
+                url: "/register",
+                data: JSON.stringify(loginVin), //這邊放整個要傳入後端的物件
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function(data) {
+                    console.log(data)
+                    if(data.isSuccess=="Y"){
+                        alert(data.errorMsg);
+                        $('#exampleModal').modal('hide');
+
+                    }else{
+                        alert(data.errorMsg);
+
+                    }
+
+                }
+
+
+            });
+        });
+    </script>
 </head>
 <body>
-$END$
+<!--放header的位置-->
+    <div id="header"></div>
+<!--麵包屑-->
+    <nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="background-color: white;">
+        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">登入</li>
+    </ol>
+    </nav>
+<!--登入框開始-->
+    <div class="container" style="display: none">
+        <div class="row">
+            <div class="col-4" ></div>
+            <div class="col-4">
+                <form>
+                    <h2 style="text-align: center">管理者登入</h2>
+                    <br>
+                     帳號:
+                    <input type="text" class="form-control">
+                    <br>
+                     密碼:
+                    <input type="password" class="form-control">
+                    <br>
+
+                    <button type="button" class="btn btn-info" style="margin-left: 40%">登入</button>
+
+                 </form>
+            </div>
+        </div>
+    </div>
+<!--註冊框-->
+<div class="container">
+    <div class="row">
+        <div class="col-4" ></div>
+        <div class="col-4">
+            <form>
+                <h2 style="text-align: center">註冊管理帳號</h2>
+                <br>
+                帳號:
+                <input type="text" class="form-control" id="account">
+                <br>
+                密碼:
+                <input type="password" class="form-control" id="password">
+                <br>
+
+                <button type="button" class="btn btn-info" style="margin-left: 40%">註冊</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 </body>
 </html>

@@ -50,4 +50,6 @@ public interface MemberMapper {
             "where memberId = #{memberId}")
     public int update(memberBean mb);
 
+
+
 }

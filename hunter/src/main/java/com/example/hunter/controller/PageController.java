@@ -16,4 +16,9 @@ public class PageController {
     public  String header(){
         return "header.html";
     }
+
+    @RequestMapping("/login")
+    public String login(){
+        return "login.html";
+    }
 }
