@@ -1,10 +1,12 @@
 package com.example.hunter.controller;
 
 import com.example.hunter.bean.AdminBean;
+import com.example.hunter.constance.SystemConst;
 import com.example.hunter.model.LoginVin;
 import com.example.hunter.model.LoginVout;
 import com.example.hunter.service.LoginService;
 import com.example.hunter.service.RegisterService;
+import com.example.hunter.util.DesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,12 +29,15 @@ public class LoginController {
     public LoginVout register(@RequestBody LoginVin loginVin){
         LoginVout lvout = new LoginVout();
         AdminBean adminBean = new AdminBean();
+
+        DesUtil desUtil = new DesUtil();
+
         adminBean.setAccount(loginVin.getAccount());
-        adminBean.setPassword(loginVin.getPassword());
+        adminBean.setPassword(desUtil.encode(loginVin.getPassword(), SystemConst.pwdEncryptKey));
         System.out.println(adminBean);
 
         try {
-            registerService.register(loginVin);
+            registerService.register(adminBean);
             lvout.setIsSuccess("Y");
             lvout.setErrorMsg("註冊成功");
         }
@@ -52,14 +57,20 @@ public class LoginController {
     public LoginVout login(@RequestBody LoginVin loginVin,  HttpServletRequest request){
         LoginVout lvout = new LoginVout();
 
+        DesUtil desUtil = new DesUtil();
+
+        AdminBean adminBean = new AdminBean();
+        adminBean.setAccount(loginVin.getAccount());
+        adminBean.setPassword(desUtil.encode(loginVin.getPassword(), SystemConst.pwdEncryptKey));
+
         try {
 //            將前端輸入的帳號,Select到的資料放進List中,再跟資料庫比對
-            List<AdminBean> adminBeanList = loginService.login(loginVin);
+            List<AdminBean> adminBeanList = loginService.login(adminBean);
 
             if(adminBeanList == null || adminBeanList.size() == 0) {
                 lvout.setIsSuccess("N");
                 lvout.setErrorMsg("查無此帳號");
-            }else if(adminBeanList.get(0).getPassword().equals(loginVin.getPassword())){
+            }else if(adminBeanList.get(0).getPassword().equals(adminBean.getPassword())){
                 lvout.setIsSuccess("Y");
                 lvout.setErrorMsg("登入成功");
 

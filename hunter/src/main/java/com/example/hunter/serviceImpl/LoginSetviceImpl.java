@@ -16,7 +16,7 @@ public class LoginSetviceImpl implements LoginService {
     @Autowired
     LoginMapper loginMapper;
 
-    public List<AdminBean> login(LoginVin loginVin){
-        return loginMapper.login(loginVin);
+    public List<AdminBean> login(AdminBean adminBean){
+        return loginMapper.login(adminBean);
     }
 }

@@ -6,5 +6,5 @@ import com.example.hunter.model.LoginVin;
 import java.util.List;
 
 public interface LoginService {
-    public List<AdminBean> login(LoginVin loginVin);
+    public List<AdminBean> login(AdminBean adminBean);
 }

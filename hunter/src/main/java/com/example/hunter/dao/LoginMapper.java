@@ -10,14 +10,14 @@ import java.util.List;
 
 @Mapper
 public interface LoginMapper {
-    @Insert("Insert into account"+
+    @Insert("Insert into admin"+
             "(account,password)"+
             "values(#{account},#{password})"
             )
-    public int register(LoginVin loginVin);
+    public int register(AdminBean adminbean);
 
     @Select("select account,password from admin "+
             "where account = #{account}"
             )
-    public List<AdminBean> login(LoginVin loginVin);
+    public List<AdminBean> login(AdminBean adminbean);
 }

@@ -1,5 +1,6 @@
 package com.example.hunter.serviceImpl;
 
+import com.example.hunter.bean.AdminBean;
 import com.example.hunter.dao.LoginMapper;
 import com.example.hunter.model.LoginVin;
 import com.example.hunter.service.RegisterService;
@@ -13,8 +14,8 @@ public class RegisterServiceImpl implements RegisterService {
     LoginMapper loginMapper;
 
     @Override
-    public int register(LoginVin loginVin){
-      return   loginMapper.register(loginVin);
+    public int register(AdminBean adminbean){
+      return   loginMapper.register(adminbean);
     };
 
 
