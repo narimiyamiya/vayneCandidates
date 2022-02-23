@@ -20,6 +20,8 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
+
+
     @RequestMapping("/findAll")
     public List<memberBean> findAll() {
         return memberService.findAll();

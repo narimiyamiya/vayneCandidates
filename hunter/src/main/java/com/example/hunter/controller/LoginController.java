@@ -9,15 +9,15 @@ import com.example.hunter.service.RegisterService;
 import com.example.hunter.util.DesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@Controller
 public class LoginController {
     @Autowired
     RegisterService registerService;
@@ -25,14 +25,18 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
-    @RequestMapping("/register")
+    @PostMapping("/register")
+    @ResponseBody
     public LoginVout register(@RequestBody LoginVin loginVin){
         LoginVout lvout = new LoginVout();
         AdminBean adminBean = new AdminBean();
 
+
+        //新建一個加密類別的儲存空間
         DesUtil desUtil = new DesUtil();
 
         adminBean.setAccount(loginVin.getAccount());
+        //將前端使用者輸入的密碼用加密方式存入資料庫中
         adminBean.setPassword(desUtil.encode(loginVin.getPassword(), SystemConst.pwdEncryptKey));
         System.out.println(adminBean);
 
@@ -53,7 +57,8 @@ public class LoginController {
 
     }
 
-    @RequestMapping("/login")
+    @PostMapping ("/login")
+    @ResponseBody
     public LoginVout login(@RequestBody LoginVin loginVin,  HttpServletRequest request){
         LoginVout lvout = new LoginVout();
 
@@ -70,30 +75,44 @@ public class LoginController {
             if(adminBeanList == null || adminBeanList.size() == 0) {
                 lvout.setIsSuccess("N");
                 lvout.setErrorMsg("查無此帳號");
+
             }else if(adminBeanList.get(0).getPassword().equals(adminBean.getPassword())){
+                HttpSession session = request.getSession();
+                // OK, 登入成功, 將mb物件放入Session範圍內，識別字串為"LoginOK"
+                session.setAttribute("loginOK",adminBean.getAccount());
+                System.out.println(session.getAttribute("loginOK"));
+
                 lvout.setIsSuccess("Y");
                 lvout.setErrorMsg("登入成功");
+
+
 
             }else{
                 lvout.setIsSuccess("N");
                 lvout.setErrorMsg("密碼錯誤");
+                }
+
+
+            }
+            catch (Exception exception){
+
+                exception.printStackTrace();
+                lvout.setIsSuccess("N");
+                lvout.setErrorMsg("登入失敗");
             }
 
 
-        }
-        catch (Exception exception)
-        {
-            exception.printStackTrace();
-            lvout.setIsSuccess("N");
-            lvout.setErrorMsg("登入失敗");
-        }
-
-
-        return lvout;
+            return lvout;
 
     }
 
-
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        //銷毀session中的KV
+        session.removeAttribute("loginOK");
+        System.out.println(session.getAttribute("loginOK"));
+        return "login.html";
+    }
 
 
 

@@ -15,13 +15,19 @@
     <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
 <!--    <link th:href="@{~/index.css}" rel="stylesheet" type="text/css">-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <style>
 
-    </style>
 
     <script>
         $(function(){
             $("#header").load("header");
+
+            //點擊註冊show出註冊框
+            $("#clickToRegister").click(function (){
+                $("#c-register").show();
+                $("#c-login").hide();
+
+            });
+
 
             // 點擊註冊送前端資料至後端儲存
             $("#register").click(function (){
@@ -41,6 +47,9 @@
                         console.log(data)
                         if(data.isSuccess=="Y"){
                             alert(data.errorMsg);
+                            $("#c-login").show();
+                            $("#c-register").hide();
+
 
                         }else{
                             alert(data.errorMsg);
@@ -52,7 +61,7 @@
 
                 });
             });
-
+            //點擊登入
             $("#login").click(function(){
                 let loginVin ={
                     account:$("#accountL").val(),
@@ -84,6 +93,8 @@
             });
 
 
+
+
         });
     </script>
 </head>
@@ -98,12 +109,12 @@
     </ol>
     </nav>
 <!--登入框開始-->
-    <div class="container" >
+    <div class="container" id="c-login">
         <div class="row">
             <div class="col-4" ></div>
             <div class="col-4">
-                <form>
-                    <h2 style="text-align: center">管理者登入</h2>
+                <form style="border: 0.5px  ridge;padding: inherit">
+                    <h2 style="text-align: center;margin-top: 10%">管理者登入</h2>
                     <br>
                      帳號:
                     <input type="text" class="form-control" id="accountL">
@@ -112,19 +123,22 @@
                     <input type="password" class="form-control" id="passwordL">
                     <br>
 
-                    <button type="button" class="btn btn-info" id="login" style="margin-left: 40%">登入</button>
-
+                    <button type="button" class="btn btn-info" id="login" style="margin-left: 40%;margin-bottom: 5%">登入</button>
+                    <br>
+                    <div style="text-align: right">
+                        <a href="#" id="clickToRegister">新帳號點此註冊</a>
+                    </div>
                  </form>
             </div>
         </div>
     </div>
 <!--註冊框-->
-<div class="container">
+<div class="container" style="display: none" id="c-register">
     <div class="row">
         <div class="col-4" ></div>
         <div class="col-4">
-            <form>
-                <h2 style="text-align: center">註冊管理帳號</h2>
+            <form style="border: 0.5px ridge;padding: inherit">
+                <h2 style="text-align: center;margin-top: 10%">註冊管理帳號</h2>
                 <br>
                 帳號:
                 <input type="text" class="form-control" id="accountR">

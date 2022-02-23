@@ -3,6 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>header</title>
+    <script>
+
+        $("#candicatesManage").click(function (){
+            window.location.href = "/home";
+        });
+        $("#category").click(function (){
+            window.location.href = "/loginPage";
+        });
+        $("#skill").click(function (){
+            window.location.href = "/loginPage";
+        });
+
+        $("#clickToLogout").click(function (){
+            $.ajax({
+                url: "/logout",
+                // data: JSON.stringify(loginVin), //這邊放整個要傳入後端的物件
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function(data) {
+                    console.log(data);
+                    console.log("已成功登出!");
+                }
+
+            });
+        });
+
+
+    </script>
 </head>
 <body>
 <!-- 導覽開始 -->
@@ -25,11 +54,11 @@
                     招募管理
                 </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">求職者管理</a>
+                <a class="dropdown-item" href="#" id="candicatesManage">求職者管理</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">職務類別管理</a>
+                <a class="dropdown-item" href="#" id="category">職務類別管理</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">技能類別管理</a>
+                <a class="dropdown-item" href="#" id="skill">技能類別管理</a>
             </div>
             </li>
             <li class="nav-item dropdown">
@@ -39,7 +68,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="#"><i class="fa fa-cog"></i>帳戶</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i>登出</a>
+                    <a class="dropdown-item" href="#" id="clickToLogout"><i class="fas fa-sign-out-alt"></i>登出</a>
                 </div>
             </li>
 
