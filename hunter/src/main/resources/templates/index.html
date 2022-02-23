@@ -83,7 +83,7 @@
                        `<td>` + allMemberList[i].secondSkill + `</td>` +
                        `<td>` + allMemberList[i].hopeWorkLoc + `</td>` +
                        `<td>` + allMemberList[i].client + `</td>` +
-                       `<td class="time">` + date.getFullYear() + `/` + (date.getMonth() + 1) + `/` + date.getDate() + `</td>` +
+                       `<td class="time">` + date.toLocaleString() +`</td>` +
                        `<td>`+`<button name="update" style="border: none"`+`thisMemberId=`+`"`+allMemberList[i].memberId+`"`+`>`+`<i class="fas fa-pen"></i>`+`</button>`+`</td>`+
                        `<td>`+`<button name="deleteMember" style="border:none"`+`thisMemberId=`+`"`+allMemberList[i].memberId+`"`+`>`+`<i class="fas fa-trash-alt" ></i>`+`</button>`+`<td>`+
                        `</tr>`
