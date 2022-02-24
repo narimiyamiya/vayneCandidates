@@ -3,22 +3,21 @@ package com.example.hunter.controller;
 import com.example.hunter.bean.AdminBean;
 import com.example.hunter.constance.SystemConst;
 import com.example.hunter.model.LoginVin;
-import com.example.hunter.model.LoginVout;
+import com.example.hunter.model.CommonResultVout;
 import com.example.hunter.service.LoginService;
 import com.example.hunter.service.RegisterService;
 import com.example.hunter.util.DesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class LoginController {
+
     @Autowired
     RegisterService registerService;
 
@@ -27,8 +26,8 @@ public class LoginController {
 
     @PostMapping("/register")
     @ResponseBody
-    public LoginVout register(@RequestBody LoginVin loginVin){
-        LoginVout lvout = new LoginVout();
+    public CommonResultVout register(@RequestBody LoginVin loginVin){
+        CommonResultVout lvout = new CommonResultVout();
         AdminBean adminBean = new AdminBean();
 
 
@@ -59,8 +58,8 @@ public class LoginController {
 
     @PostMapping ("/login")
     @ResponseBody
-    public LoginVout login(@RequestBody LoginVin loginVin,  HttpServletRequest request){
-        LoginVout lvout = new LoginVout();
+    public CommonResultVout login(@RequestBody LoginVin loginVin, HttpServletRequest request){
+        CommonResultVout lvout = new CommonResultVout();
 
         DesUtil desUtil = new DesUtil();
 
@@ -107,11 +106,15 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session){
+    @ResponseBody
+    public CommonResultVout logout(HttpSession session){
         //銷毀session中的KV
         session.removeAttribute("loginOK");
         System.out.println(session.getAttribute("loginOK"));
-        return "login.html";
+        CommonResultVout lvout = new CommonResultVout();
+        lvout.setIsSuccess("Y");
+        lvout.setErrorMsg("登出成功");
+        return lvout;
     }
 
 

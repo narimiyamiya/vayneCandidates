@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Home</title>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
    
@@ -22,6 +22,8 @@
            $("#header").load("header");
 
            let allMemberList;
+           let allSkillsList;
+           let skillsMap = {};
            let thisMemberId;
            let isUpdate;
            let thisMember;
@@ -37,7 +39,7 @@
                    success: function (data) {
                        console.log(data);
                        allMemberList = data;
-                       showPage(1);
+                       findAllSkill();
 
                        let totalPages = allMemberList.length/10;
                        if(allMemberList.length % 10 > 0){
@@ -59,6 +61,35 @@
                });
            }
 
+           // select全部技能
+           function findAllSkill(){
+               $.ajax({
+                   url: "/findAllSkill",
+                   type: "POST",
+                   dataType: "json",
+                   // data: JSON.stringify(memberId), //這邊放整個要傳入後端的物件
+                   contentType: "application/json;charset=utf-8",
+                   success: function (data) {
+                       allSkillsList = data;
+                       $('#mainSkill').html('');
+                       $('#secondSkill').html('');
+                       for(let i in allSkillsList){
+                           skillsMap[allSkillsList[i].skillId] = allSkillsList[i].skillName;
+
+                           $('#mainSkill').append(
+                               '<option value="' + allSkillsList[i].skillId + '">' + allSkillsList[i].skillName + '</option>'
+                           );
+                           $('#secondSkill').append(
+                               '<option value="' + allSkillsList[i].skillId + '">' + allSkillsList[i].skillName + '</option>'
+                           );
+                       }
+                       showPage(1);
+                   }
+               });
+
+           }
+           // select全部技能結束
+
            function showPage(pageNo){
                let tbody = $("#candidates");
                tbody.html("");
@@ -79,8 +110,8 @@
                        `<td>` + allMemberList[i].name + `</td>` +
                        `<td>` + allMemberList[i].gender + `</td>` +
                        `<td>` + allMemberList[i].age + `</td>` +
-                       `<td>` + allMemberList[i].mainSkill + `</td>` +
-                       `<td>` + allMemberList[i].secondSkill + `</td>` +
+                       `<td>` + skillsMap[allMemberList[i].mainSkill] + `</td>` +
+                       `<td>` + skillsMap[allMemberList[i].secondSkill] + `</td>` +
                        `<td>` + allMemberList[i].hopeWorkLoc + `</td>` +
                        `<td>` + allMemberList[i].client + `</td>` +
                        `<td class="time">` + date.toLocaleString() +`</td>` +
@@ -321,7 +352,7 @@
             <div class="col-12">
                 <div class="row" style="margin-bottom:20px">
                     <div class="col-2"></div>
-                    <div class="col-8 " style="text-align: center;font-size: large;">求職者管理</div>
+                    <div class="col-8 " style="text-align: center;font-size: x-large;font-weight: bold;letter-spacing: 1rem">求職者管理</div>
                     <div class="col-2"><button type="button" class="btn btn-info" id="plusBtn" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus" style="margin-right: 5px"></i>新增求職者</button></div>
                 </div>
 
@@ -413,11 +444,21 @@
                              </div>
                              <div class="col-md-6">
                                  <label  class="form-label">主要技能</label>
-                                 <input type="text" class="form-control" id="mainSkill">
+                                 <select class="form-control form-select" aria-label="Default select example" id="mainSkill">
+                                     <option selected>Open this select menu</option>
+                                     <option value="1">One</option>
+                                     <option value="2">Two</option>
+                                     <option value="3">Three</option>
+                                 </select>
                              </div>
                              <div class="col-md-6">
                                  <label  class="form-label">次要技能</label>
-                                 <input type="text" class="form-control" id="secondSkill">
+                                 <select class="form-control form-select" aria-label="Default select example" id="secondSkill">
+                                     <option selected>Open this select menu</option>
+                                     <option value="1">One</option>
+                                     <option value="2">Two</option>
+                                     <option value="3">Three</option>
+                                 </select>
                              </div>
                              <div class="col-md-6">
                                  <label  class="form-label">職位</label>

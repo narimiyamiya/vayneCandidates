@@ -12,7 +12,7 @@
             window.location.href = "/loginPage";
         });
         $("#skill").click(function (){
-            window.location.href = "/loginPage";
+            window.location.href = "/skills";
         });
 
         $("#clickToLogout").click(function (){
@@ -23,8 +23,7 @@
                 dataType: "json",
                 contentType: "application/json;charset=utf-8",
                 success: function(data) {
-                    console.log(data);
-                    console.log("已成功登出!");
+                    window.location.href = "/loginPage";
                 }
 
             });

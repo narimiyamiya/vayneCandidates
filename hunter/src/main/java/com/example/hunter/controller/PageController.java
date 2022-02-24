@@ -38,4 +38,9 @@ public class PageController {
     public String login(){
         return "login.html";
     }
+
+    @RequestMapping("/skills")
+    public String skills(){
+        return "skillsManage.html";
+    }
 }

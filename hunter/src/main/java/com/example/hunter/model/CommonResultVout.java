@@ -1,6 +1,6 @@
 package com.example.hunter.model;
 
-public class LoginVout {
+public class CommonResultVout {
     private String isSuccess;
     private String errorMsg;
 
