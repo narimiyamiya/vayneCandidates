@@ -23,8 +23,8 @@ public interface SkillMapper {
 
     @Update("update skills set " +
             "skillName = #{skillName},"+
-            "describeSkill = #{describeSkill},"+
-            "createTime = #{createTime},"+
+            "describeSkill = #{describeSkill}"+
+//            "createTime = #{createTime},"+
             "where skillId = #{skillId}")
     public int update(SkillBean sb);
 

@@ -3,6 +3,7 @@ package com.example.hunter.controller;
 import com.example.hunter.bean.SkillBean;
 import com.example.hunter.model.AddSkillVin;
 import com.example.hunter.model.CommonResultVout;
+import com.example.hunter.model.DeleteSkillVin;
 import com.example.hunter.model.UpdateSkillVin;
 import com.example.hunter.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,13 @@ public class SkillController {
         SkillBean sb = new SkillBean();
         Date date = new Date();
         Timestamp ts = new Timestamp(System.currentTimeMillis());
+        sb.setSkillId(updateSkillVin.getSkillId());
         sb.setSkillName(updateSkillVin.getSkillName());
-        sb.setDescribeSkill(updateSkillVin.getDescribe());
+        sb.setDescribeSkill(updateSkillVin.getDescribeSkill());
 
 
         try {
-            skillService.update(sb);
+            var x=skillService.update(sb);
             commonResultVout.setIsSuccess("Y");
             commonResultVout.setErrorMsg("修改技能成功");
         }
@@ -81,6 +83,22 @@ public class SkillController {
         return commonResultVout;
 
     }
+    @RequestMapping("/deleteSkills")
+    public  CommonResultVout commonResultVout(@RequestBody DeleteSkillVin deleteSkillVin){
+        CommonResultVout commonResultVout = new CommonResultVout();
+        try {
+            skillService.delete(deleteSkillVin.getSkillId());
+            commonResultVout.setIsSuccess("Y");
+            commonResultVout.setErrorMsg("刪除求職者成功");
+        }
+        catch (Exception exception)
+        {
+            commonResultVout.setIsSuccess("N");
+            commonResultVout.setErrorMsg("刪除求職者失敗");
+        }
+        return commonResultVout;
+    }
+
 
 
 

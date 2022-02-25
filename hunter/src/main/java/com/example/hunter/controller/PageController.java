@@ -40,7 +40,34 @@ public class PageController {
     }
 
     @RequestMapping("/skills")
-    public String skills(){
-        return "skillsManage.html";
+    public String skills(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        System.out.println(session.getAttribute("loginOK"));
+        if(session.getAttribute("loginOK")!=null){
+
+            return "skillsManage.html";
+
+        }else{
+
+            return "login.html";
+
+        }
+
+    }
+
+    @RequestMapping("/jobs")
+    public String jobs(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        System.out.println(session.getAttribute("loginOK"));
+        if(session.getAttribute("loginOK")!=null){
+
+            return "jobManage.html";
+
+        }else{
+
+            return "login.html";
+
+        }
+
     }
 }

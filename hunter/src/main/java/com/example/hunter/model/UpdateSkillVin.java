@@ -6,8 +6,9 @@ public class UpdateSkillVin {
 
     private int skillId;
     private String skillName;
-    private String describe;
+    private String describeSkill;
     private Date createTime;
+
 
     public int getSkillId() {
         return skillId;
@@ -25,12 +26,12 @@ public class UpdateSkillVin {
         this.skillName = skillName;
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getDescribeSkill() {
+        return describeSkill;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setDescribeSkill(String describeSkill) {
+        this.describeSkill = describeSkill;
     }
 
     public Date getCreateTime() {
@@ -39,5 +40,15 @@ public class UpdateSkillVin {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    @Override
+    public String toString() {
+        return "UpdateSkillVin{" +
+                "skillId=" + skillId +
+                ", skillName='" + skillName + '\'' +
+                ", describeSkill='" + describeSkill + '\'' +
+                ", createTime=" + createTime +
+                '}';
     }
 }

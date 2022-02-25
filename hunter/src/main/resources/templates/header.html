@@ -5,11 +5,15 @@
     <title>header</title>
     <script>
 
+        $("#home").click(function (){
+           window.location.href = "/home";
+        });
+
         $("#candicatesManage").click(function (){
             window.location.href = "/home";
         });
         $("#category").click(function (){
-            window.location.href = "/loginPage";
+            window.location.href = "/jobs";
         });
         $("#skill").click(function (){
             window.location.href = "/skills";
@@ -23,10 +27,17 @@
                 dataType: "json",
                 contentType: "application/json;charset=utf-8",
                 success: function(data) {
+                    if(data.isSuccess=="Y"){
+                        alert(data.errorMsg);
+                    }else{
+                        alert(data.errorMsg);
+
+                    }
                     window.location.href = "/loginPage";
                 }
 
             });
+
         });
 
 
@@ -43,7 +54,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">首頁 <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#" id="home">首頁 <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">管理</a>
@@ -72,10 +83,10 @@
             </li>
 
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+<!--        <form class="form-inline my-2 my-lg-0">-->
+<!--            <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search" aria-label="Search">-->
+<!--            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+<!--        </form>-->
     </div>
 </nav>
 <!-- 導覽結束 -->

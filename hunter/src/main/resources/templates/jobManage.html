@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>求職者技能管理</title>
+    <title>職務管理</title>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 
@@ -21,28 +21,28 @@
         $(function() {
             $("#header").load("header");
 
-            let allSkillsList;
-            let thisSkillId;
-            let thisSkill;
+            let allJobsList;
+            let thisJobId;
+            let thisJob;
             let isUpdate;
 
-            findAllSkill();
+            findAllJobs();
 
             // select全部技能
-            function findAllSkill(){
+            function findAllJobs(){
                 $.ajax({
-                    url: "/findAllSkill",
+                    url: "/findAllJobs",
                     type: "POST",
                     dataType: "json",
                     // data: JSON.stringify(memberId), //這邊放整個要傳入後端的物件
                     contentType: "application/json;charset=utf-8",
                     success: function (data) {
                         console.log(data);
-                        allSkillsList = data;
+                        allJobsList = data;
                         showPage(1);
 
-                        let totalPages = allSkillsList.length/10;
-                        if(allSkillsList.length % 10 > 0){
+                        let totalPages = allJobsList.length/10;
+                        if(allJobsList.length % 10 > 0){
                             totalPages++;
                         }
 
@@ -65,27 +65,27 @@
 
             // 長出畫面
             function showPage(pageNo) {
-                let tbody = $("#skillTbody");
+                let tbody = $("#jobTbody");
                 tbody.html("");
 
                 let beginNo = (pageNo - 1) * 10;
                 let endNo = pageNo * 10;
-                if (allSkillsList.length < endNo) {
-                    endNo = allSkillsList.length;
+                if (allJobsList.length < endNo) {
+                    endNo = allJobsList.length;
                 }
 
                 for (let i = beginNo; i < endNo; i++) {
-                    let date = new Date(allSkillsList[i].createTime);
+                    let date = new Date(allJobsList[i].createTime);
                     let number = i + 1;
 
                     tbody.append(
                         `<tr>` +
                         `<th scope="row">` + number + `</th>` +
-                        `<td>` + allSkillsList[i].skillName+`</td>` +
-                        `<td>` + allSkillsList[i].describeSkill+`</td>` +
+                        `<td>` + allJobsList[i].jobName+`</td>` +
+                        `<td>` + allJobsList[i].describeJob+`</td>` +
                         `<td>` + date.toLocaleString() + `</td>` +
-                        `<td>`+`<button name="update" style="border: none"`+`thisSkillId=`+`"`+allSkillsList[i].skillId+`"`+`>`+`<i class="fas fa-pen"></i>`+`</button>`+`</td>`+
-                        `<td>`+`<button name="deletesSkill" style="border:none"`+`thisSkillId=`+`"`+allSkillsList[i].skillId+`"`+`>`+`<i class="fas fa-trash-alt" ></i>`+`</button>`+`<td>`+
+                        `<td>`+`<button name="update" style="border: none"`+`thisJobId=`+`"`+allJobsList[i].jobId+`"`+`>`+`<i class="fas fa-pen"></i>`+`</button>`+`</td>`+
+                        `<td>`+`<button name="deleteJob" style="border:none"`+`thisJobId=`+`"`+allJobsList[i].jobId+`"`+`>`+`<i class="fas fa-trash-alt" ></i>`+`</button>`+`<td>`+
                         `</tr>`
                     )
                 }
@@ -93,32 +93,32 @@
 
                     $(this).click(function () {
                         isUpdate = true;
-                        thisSkillId = $(this).attr("thisSkillId") ;
+                        thisJobId = $(this).attr("thisJobId") ;
                         $('#exampleModal').modal('show');
-                        $("#exampleModalLabel").text("修改技能");
+                        $("#exampleModalLabel").text("修改職務");
                         $("#confirm").text("確定更新");
-                        for(let i = 0;i<allSkillsList.length;i++){
-                            if(allSkillsList[i].skillId==thisSkillId){
+                        for(let i = 0;i<allJobsList.length;i++){
+                            if(allJobsList[i].jobId==thisJobId){
                                 //給一個空間暫存要準備來把前端前面就撈出來的值放入表單中
-                                thisSkill = allSkillsList[i];
+                                thisJob = allJobsList[i];
                                 break;
                             }
                         }
-                        $("#skillName").val(thisSkill.skillName);
-                        $("#describe").val(thisSkill.describeSkill);
+                        $("#jobName").val(thisJob.jobName);
+                        $("#describeJob").val(thisJob.describeJob);
 
                     });
                 });
 
-                $("[name='deletesSkill']").each(function (index, element)  {
+                $("[name='deleteJob']").each(function (index, element)  {
 
                     $(this).click(function () {
-                        thisSkillId = $(this).attr("thisSkillId") ;
+                        thisJobId = $(this).attr("thisJobId") ;
 
-                        let deleteSkillVin ={
-                            skillId:thisSkillId
+                        let deleteJobVin ={
+                            jobId:thisJobId
                         }
-                        deleteSkill(deleteSkillVin);
+                        deleteJobs(deleteJobVin);
 
                     });
                 });
@@ -131,8 +131,8 @@
 
             //點選新增技能按鈕清除input欄位
             $("#plusBtn").click(function (){
-                $("#skillName").val("");
-                $("#describe").val("");
+                $("#jobName").val("");
+                $("#describeJob").val("");
                 $("#exampleModalLabel").text("新增技能");
                 $("#confirm").text("確定新增");
             });
@@ -140,30 +140,30 @@
             //點擊確認送出表單
             $("#confirm").click(function () {
                 if (isUpdate) {
-                    let UpdateSkillVin = {
-                        skillId:thisSkillId,
-                        skillName: $("#skillName").val(),
-                        describeSkill: $("#describe").val()
+                    let UpdateJobVin = {
+                        jobId:thisJobId,
+                        jobName: $("#jobName").val(),
+                        describeJob: $("#describeJob").val()
                     }
-                    UpdateSkill(UpdateSkillVin);
+                    UpdateJobs(UpdateJobVin);
 
                 }else{
-                    let AddSkillVin ={
-                        skillName: $("#skillName").val(),
-                        describeSkill: $("#describe").val()
+                    let AddJobVin ={
+                        jobName: $("#jobName").val(),
+                        describeJob: $("#describeJob").val()
 
                     }
 
-                    addSkill(AddSkillVin);
+                    addJobs(AddJobVin);
                 }
             });
 
             //新增方法開始
-            function addSkill(AddSkillVin){
+            function addJobs(AddJobVin){
 
                 $.ajax({
-                    url: "/addSkills",
-                    data: JSON.stringify(AddSkillVin), //這邊放整個要傳入後端的物件
+                    url: "/addJobs",
+                    data: JSON.stringify(AddJobVin), //這邊放整個要傳入後端的物件
                     type: "POST",
                     dataType: "json",
                     contentType: "application/json;charset=utf-8",
@@ -172,9 +172,9 @@
                         if(data.isSuccess=="Y"){
                             alert(data.errorMsg);
                             $('#exampleModal').modal('hide');
-                            thisSkill=null;
-                            thisSkillId=null;
-                            findAllSkill();
+                            thisJob=null;
+                            thisJobId=null;
+                            findAllJobs();
                         }else{
                             alert(data.errorMsg);
                         }
@@ -186,11 +186,11 @@
             }
 
             //更新方法開始
-            function UpdateSkill(UpdateSkillVin){
+            function UpdateJobs(UpdateJobVin){
 
                 $.ajax({
-                    url: "/updateSkills",
-                    data: JSON.stringify(UpdateSkillVin), //這邊放整個要傳入後端的物件
+                    url: "/updateJobs",
+                    data: JSON.stringify(UpdateJobVin), //這邊放整個要傳入後端的物件
                     type: "POST",
                     dataType: "json",
                     contentType: "application/json;charset=utf-8",
@@ -199,9 +199,9 @@
                         if(data.isSuccess=="Y"){
                             alert(data.errorMsg);
                             $('#exampleModal').modal('hide');
-                            thisSkill=null;
-                            thisSkillId=null;
-                            findAllSkill();
+                            thisJob=null;
+                            thisJobId=null;
+                            findAllJobs();
                         }else{
                             alert(data.errorMsg);
                         }
@@ -212,11 +212,11 @@
                 });
             }
             //刪除方法開始
-            function deleteSkill(deleteSkillVin){
+            function deleteJobs(deleteJobVin){
                 if(confirm("確定要刪除該筆資料嗎?")){
                     $.ajax({
-                        url: "/deleteSkills",
-                        data: JSON.stringify(deleteSkillVin), //這邊放整個要傳入後端的物件
+                        url: "/deleteJobs",
+                        data: JSON.stringify(deleteJobVin), //這邊放整個要傳入後端的物件
                         type: "POST",
                         dataType: "json",
                         contentType: "application/json;charset=utf-8",
@@ -224,7 +224,7 @@
                             console.log(data)
                             if(data.isSuccess=="Y"){
                                 alert(data.errorMsg);
-                                findAllSkill();
+                                findAllJobs();
                             }else{
                                 alert(data.errorMsg);
                             }
@@ -250,7 +250,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white;">
             <li class="breadcrumb-item"><a href="#">招募管理</a></li>
-            <li class="breadcrumb-item active" aria-current="page">技能管理</li>
+            <li class="breadcrumb-item active" aria-current="page">職務管理</li>
         </ol>
     </nav>
 <!--    表格開始-->
@@ -260,7 +260,7 @@
             <div class="col-12">
                 <div class="row" style="margin-bottom:20px">
                     <div class="col-2"></div>
-                    <div class="col-8 " style="text-align: center;font-size: x-large;font-weight: bold;letter-spacing: 1rem">技能管理</div>
+                    <div class="col-8 " style="text-align: center;font-size: x-large;font-weight: bold;letter-spacing: 1rem">職務管理</div>
                     <div class="col-2"><button type="button" class="btn btn-info" id="plusBtn" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus" style="margin-right: 5px"></i>新增職務</button></div>
                 </div>
 
@@ -268,14 +268,14 @@
                     <thead style="text-align: center">
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">技能名稱</th>
+                        <th scope="col">職務名稱</th>
                         <th scope="col">敘述</th>
                         <th scope="col">建立時間</th>
                         <th scope="col">修改</th>
                         <th scope="col">刪除</th>
                     </tr>
                     </thead>
-                    <tbody id="skillTbody" style="text-align: center">
+                    <tbody id="jobTbody" style="text-align: center">
                     <tr>
                         <td>Spring</td>
                         <td></td>
@@ -309,11 +309,11 @@
                     <form class="row g-3">
                         <div class="col-md-12">
                             <label  class="form-label">技能名稱</label>
-                            <input type="text" class="form-control" id="skillName">
+                            <input type="text" class="form-control" id="jobName">
                         </div>
                         <div class="col-md-12">
                             <label  class="form-label">敘述</label><br>
-                            <textarea type="text" class="form-control" id="describe"></textarea>
+                            <textarea type="text" class="form-control" id="describeJob"></textarea>
 
                         </div>
 

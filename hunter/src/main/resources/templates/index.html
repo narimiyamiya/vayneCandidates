@@ -29,6 +29,16 @@
            let thisMember;
            getAllMember();
 
+
+           $(document).ready(function(){
+               $("#search").on("keyup", function() {
+                   let value = $(this).val().toLowerCase();
+                   $("#candidates tr").filter(function() {
+                       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                   });
+               });
+           });
+
            function getAllMember(){
                $.ajax({
                    url: "/findAll",
@@ -196,6 +206,8 @@
                $("#hopeWorkLoc").val("");
                $("#hope").val("");
                $("input[type='checkbox']").prop('checked', null);
+               $("#exampleModalLabel").text("新增求職者資訊");
+               $("#confirm").text("確定新增     ");
            });
             //新增求職者方法開始
            $("#confirm").click(function () {
@@ -275,25 +287,27 @@
            //刪除求職者方法開始
            //將每個button賦予memberId的值,以便後端獲得。
            function deleteMember(deleteMemberVin){
-               $.ajax({
-                   url: "/deleteCandidate",
-                   data: JSON.stringify(deleteMemberVin), //這邊放整個要傳入後端的物件
-                   type: "POST",
-                   dataType: "json",
-                   contentType: "application/json;charset=utf-8",
-                   success: function(data) {
-                       console.log(data)
-                       if(data.isSuccess=="Y"){
-                           alert(data.errorMsg);
-                           getAllMember();
-                       }else{
-                           alert(data.errorMsg);
+               if(confirm("確定要刪除該筆資料嗎?")){
+                   $.ajax({
+                       url: "/deleteCandidate",
+                       data: JSON.stringify(deleteMemberVin), //這邊放整個要傳入後端的物件
+                       type: "POST",
+                       dataType: "json",
+                       contentType: "application/json;charset=utf-8",
+                       success: function(data) {
+                           console.log(data)
+                           if(data.isSuccess=="Y"){
+                               alert(data.errorMsg);
+                               getAllMember();
+                           }else{
+                               alert(data.errorMsg);
+                           }
+
                        }
+                   });
 
-                   }
+               }
 
-
-               });
 
            }
            //刪除方法結束
@@ -351,10 +365,21 @@
           <div class="row">   
             <div class="col-12">
                 <div class="row" style="margin-bottom:20px">
-                    <div class="col-2"></div>
-                    <div class="col-8 " style="text-align: center;font-size: x-large;font-weight: bold;letter-spacing: 1rem">求職者管理</div>
+                    <div class="col-12">
+                        <div class="col-12" style="text-align: center;font-size: x-large;font-weight: bold;letter-spacing: 1rem">求職者管理</div>
+                    </div>
+                </div>
+
+                <div class="row" style="display: flex;justify-content: right">
+                    <div class="col-4"></div>
+                    <form class="col-6 form-inline my-2 my-lg-0" style="justify-content: right">
+                        <input class="form-control mr-sm-2" type="search" placeholder="關鍵字" id="search"  aria-label="Search">
+<!--                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>-->
+                    </form>
                     <div class="col-2"><button type="button" class="btn btn-info" id="plusBtn" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus" style="margin-right: 5px"></i>新增求職者</button></div>
                 </div>
+
+
 
                 <table class="table table-striped" style="margin-top:10px;">
                     <thead style="text-align: center">
