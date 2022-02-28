@@ -27,6 +27,11 @@ public class MemberController {
         return memberService.findAll();
     }
 
+    @RequestMapping("/findSpecificSkill")
+    public List<memberBean> findSpecificSkill(@RequestBody String param){
+        return memberService.findSpecificSkill(param);
+    };
+
     @RequestMapping("/addCandidate")
     public AddMemberVout addMemberVout(@RequestBody AddMemberInfoVin addMemberInfoVin) {
         AddMemberVout amv = new AddMemberVout();
@@ -70,13 +75,6 @@ public class MemberController {
         return amv;
     }
 
-    @RequestMapping("/getMemberByPage")
-    public List<memberBean> getMemberByPage() {
-        PagingBean pb = new PagingBean();
-        pb.setSomeLimit(10);
-        pb.setOffsetLimit(0);
-        return memberService.getMemberByPage(pb);
-    }
 
     @RequestMapping("/deleteCandidate")
     public DeleteMemberVout deleteMemberVout(@RequestBody DeleteMemberVin deleteMemberVin) {

@@ -1,6 +1,5 @@
 package com.example.hunter.dao;
 
-import com.example.hunter.bean.PagingBean;
 import com.example.hunter.bean.memberBean;
 import org.apache.ibatis.annotations.*;
 
@@ -11,6 +10,11 @@ public interface MemberMapper {
 
     @Select("Select * from member")
     public List<memberBean> findAll();
+
+    @Select("Select * from member where mainSkill in (SELECT skillId from skills where skillName like concat('%',#{param},'%') ) " +
+            "or secondSkill in (SELECT skillId FROM skills WHERE skillName LIKE concat('%',#{param},'%') ) " +
+            "or name like concat('%',#{param},'%') ")
+    public List<memberBean> findSpecificSkill(@Param("param") String param);
 
     @Options(useGeneratedKeys = true, keyProperty = "memberId")
     @Insert({"insert into member"+
@@ -23,8 +27,8 @@ public interface MemberMapper {
             "#{seniority},#{hope},#{client},#{createTime},#{updateTime})"  })
     public int save(memberBean mb);
 
-    @Select("select * from member lIMIT #{someLimit} OFFSET #{offsetLimit}")
-    public List<memberBean> getMemberByPage(PagingBean pb);
+//    @Select("select * from member lIMIT #{someLimit} OFFSET #{offsetLimit}")
+//    public List<memberBean> getMemberByPage(PagingBean pb);
 
     @Delete("delete from member where memberId = #{memberId}")
     public void delete(int memberId);

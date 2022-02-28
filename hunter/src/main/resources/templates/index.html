@@ -30,13 +30,30 @@
            getAllMember();
 
 
-           $(document).ready(function(){
-               $("#search").on("keyup", function() {
-                   let value = $(this).val().toLowerCase();
-                   $("#candidates tr").filter(function() {
-                       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                   });
+
+
+
+           //篩選技能
+           $("#searchBtn").click(function (){
+               let param = $("#search").val();
+               $.ajax({
+                   url: "/findSpecificSkill",
+                   type: "POST",
+                   dataType: "json",
+                   data: param, //這邊放整個要傳入後端的物件
+                   contentType: "application/json;charset=utf-8",
+                   success: function (data) {
+                       allMemberList = data;
+                       showPage(1);
+                       pageSelector();
+                   }
                });
+           });
+
+           //篩選技能結束
+
+           $("#clearBtn").click(function (){
+              getAllMember();
            });
 
            function getAllMember(){
@@ -50,23 +67,8 @@
                        console.log(data);
                        allMemberList = data;
                        findAllSkill();
+                       pageSelector();
 
-                       let totalPages = allMemberList.length/10;
-                       if(allMemberList.length % 10 > 0){
-                           totalPages++;
-                       }
-
-                       window.pagObj = $('#pagination').twbsPagination({
-                           totalPages: totalPages,
-                           visiblePages: 5,//顯示幾個頁碼
-                           first:"第一頁",
-                           prev:"上一頁",
-                           last:"最後一頁",
-                           next:"下一頁",
-                           onPageClick: function (event, page) {
-                               showPage(page);
-                           }
-                       });
                    }
                });
            }
@@ -99,6 +101,26 @@
 
            }
            // select全部技能結束
+
+           //分頁方法
+           function pageSelector(){
+               let totalPages = allMemberList.length/10;
+               if(allMemberList.length % 10 > 0){
+                   totalPages++;
+               }
+               $('#pagination').twbsPagination('destroy');
+               window.pagObj = $('#pagination').twbsPagination({
+                   totalPages: totalPages,
+                   visiblePages: 5,//顯示幾個頁碼
+                   first:"第一頁",
+                   prev:"上一頁",
+                   last:"最後一頁",
+                   next:"下一頁",
+                   onPageClick: function (event, page) {
+                       showPage(page);
+                   }
+               });
+           }
 
            function showPage(pageNo){
                let tbody = $("#candidates");
@@ -347,7 +369,7 @@
 
 </head>
 <body>
-    
+
 
  <!-- 導覽開始 -->
     <div id="header"></div>
@@ -361,8 +383,8 @@
       </nav>
     <!-- 表格開始 -->
     <div class="container">
-          
-          <div class="row">   
+
+          <div class="row">
             <div class="col-12">
                 <div class="row" style="margin-bottom:20px">
                     <div class="col-12">
@@ -372,10 +394,11 @@
 
                 <div class="row" style="display: flex;justify-content: right">
                     <div class="col-4"></div>
-                    <form class="col-6 form-inline my-2 my-lg-0" style="justify-content: right">
+                    <div class="col-6 form-inline my-2 my-lg-0" style="justify-content: right">
                         <input class="form-control mr-sm-2" type="search" placeholder="關鍵字" id="search"  aria-label="Search">
-<!--                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>-->
-                    </form>
+                        <button class="btn btn-outline-success my-2 my-sm-0"  id="searchBtn">搜尋</button>
+                        <button class="btn btn-outline-success  mx-1 my-sm-0" id="clearBtn">清除</button>
+                    </div>
                     <div class="col-2"><button type="button" class="btn btn-info" id="plusBtn" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus" style="margin-right: 5px"></i>新增求職者</button></div>
                 </div>
 

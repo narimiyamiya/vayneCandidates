@@ -1,6 +1,5 @@
 package com.example.hunter.serviceImpl;
 
-import com.example.hunter.bean.PagingBean;
 import com.example.hunter.bean.memberBean;
 import com.example.hunter.dao.MemberMapper;
 import com.example.hunter.service.MemberService;
@@ -20,9 +19,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public  List<memberBean> getMemberByPage(PagingBean pb){
-        return memberMapper.getMemberByPage(pb);
+    public  List<memberBean> findSpecificSkill(String param) {
+        List<memberBean> memberBeans = memberMapper.findSpecificSkill(param);
+        return memberBeans;
     }
+
 
     @Override
     public int save(memberBean mb){

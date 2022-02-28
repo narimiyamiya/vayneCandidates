@@ -1,6 +1,5 @@
 package com.example.hunter.service;
 
-import com.example.hunter.bean.PagingBean;
 import com.example.hunter.bean.memberBean;
 
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 public interface MemberService {
     public List<memberBean> findAll();
 
-    public List<memberBean> getMemberByPage(PagingBean pb);
+    public  List<memberBean> findSpecificSkill(String param);
 
     public int save(memberBean mb);
 
