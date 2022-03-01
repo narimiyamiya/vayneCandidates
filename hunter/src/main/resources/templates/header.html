@@ -19,6 +19,10 @@
             window.location.href = "/skills";
         });
 
+        $("#admin").click(function (){
+            window.location.href = "/adminPage";
+        });
+
         $("#clickToLogout").click(function (){
             $.ajax({
                 url: "/logout",
@@ -56,9 +60,9 @@
             <li class="nav-item active">
                 <a class="nav-link" href="#" id="home">首頁 <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">管理</a>
-            </li>
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link" href="#">管理</a>-->
+<!--            </li>-->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     招募管理
@@ -76,7 +80,7 @@
                     Admin
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#"><i class="fa fa-cog"></i>帳戶</a>
+                    <a class="dropdown-item" href="#" id="admin"><i class="fa fa-cog"></i>帳戶</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#" id="clickToLogout"><i class="fas fa-sign-out-alt"></i>登出</a>
                 </div>

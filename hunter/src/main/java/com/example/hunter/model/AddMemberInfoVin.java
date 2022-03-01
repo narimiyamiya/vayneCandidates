@@ -17,19 +17,12 @@ public class AddMemberInfoVin {
     private String mainSkill;
     private String secondSkill;
     private String role;
+    private String language;
     private int seniority;
     private String hope;
     private String client;
     private Date createTime;
     private Date updateTime;
-
-    public int getSeniority() {
-        return seniority;
-    }
-
-    public void setSeniority(int seniority) {
-        this.seniority = seniority;
-    }
 
     public int getMemberId() {
         return memberId;
@@ -143,6 +136,22 @@ public class AddMemberInfoVin {
         this.role = role;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public int getSeniority() {
+        return seniority;
+    }
+
+    public void setSeniority(int seniority) {
+        this.seniority = seniority;
+    }
+
     public String getHope() {
         return hope;
     }
@@ -177,7 +186,7 @@ public class AddMemberInfoVin {
 
     @Override
     public String toString() {
-        return "AddMemberInfoVin{" +
+        return "memberBean{" +
                 "memberId=" + memberId +
                 ", name='" + name + '\'' +
                 ", age=" + age +
@@ -192,6 +201,7 @@ public class AddMemberInfoVin {
                 ", mainSkill='" + mainSkill + '\'' +
                 ", secondSkill='" + secondSkill + '\'' +
                 ", role='" + role + '\'' +
+                ", language='" + language + '\'' +
                 ", seniority=" + seniority +
                 ", hope='" + hope + '\'' +
                 ", client='" + client + '\'' +

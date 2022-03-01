@@ -1,12 +1,9 @@
-package com.example.hunter.bean;
+package com.example.hunter.model;
 
-public class AdminBean {
+public class AdminVin {
     private String name;
     private String account;
     private String password;
-
-    public AdminBean() {
-    }
 
     public String getName() {
         return name;

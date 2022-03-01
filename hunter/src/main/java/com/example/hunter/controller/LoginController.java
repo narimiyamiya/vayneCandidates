@@ -78,7 +78,8 @@ public class LoginController {
             }else if(adminBeanList.get(0).getPassword().equals(adminBean.getPassword())){
                 HttpSession session = request.getSession();
                 // OK, 登入成功, 將mb物件放入Session範圍內，識別字串為"LoginOK"
-                session.setAttribute("loginOK",adminBean.getAccount());
+                AdminBean ab = adminBeanList.get(0);
+                session.setAttribute("loginOK",ab);
                 System.out.println(session.getAttribute("loginOK"));
 
                 lvout.setIsSuccess("Y");

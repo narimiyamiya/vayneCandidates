@@ -39,6 +39,21 @@ public class PageController {
         return "login.html";
     }
 
+    @RequestMapping("/adminPage")
+    public String admin(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        System.out.println(session.getAttribute("loginOK"));
+        if(session.getAttribute("loginOK")!=null){
+
+            return "admin.html";
+
+        }else{
+
+            return "login.html";
+
+        }
+    }
+
     @RequestMapping("/skills")
     public String skills(HttpServletRequest request){
         HttpSession session = request.getSession();

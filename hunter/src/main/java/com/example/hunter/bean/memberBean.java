@@ -18,19 +18,12 @@ public class memberBean {
     private String mainSkill;
     private String secondSkill;
     private String role;
+    private String language;
     private int seniority;
     private String hope;
     private String client;
     private Date createTime;
     private Date updateTime;
-
-    public int getSeniority() {
-        return seniority;
-    }
-
-    public void setSeniority(int seniority) {
-        this.seniority = seniority;
-    }
 
     public int getMemberId() {
         return memberId;
@@ -144,22 +137,28 @@ public class memberBean {
         this.role = role;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public int getSeniority() {
+        return seniority;
+    }
+
+    public void setSeniority(int seniority) {
+        this.seniority = seniority;
+    }
+
     public String getHope() {
         return hope;
     }
 
     public void setHope(String hope) {
         this.hope = hope;
-    }
-
-
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public String getClient() {
@@ -170,6 +169,14 @@ public class memberBean {
         this.client = client;
     }
 
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -177,7 +184,6 @@ public class memberBean {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-
 
     @Override
     public String toString() {
@@ -196,6 +202,7 @@ public class memberBean {
                 ", mainSkill='" + mainSkill + '\'' +
                 ", secondSkill='" + secondSkill + '\'' +
                 ", role='" + role + '\'' +
+                ", language='" + language + '\'' +
                 ", seniority=" + seniority +
                 ", hope='" + hope + '\'' +
                 ", client='" + client + '\'' +

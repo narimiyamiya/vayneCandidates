@@ -1,12 +1,11 @@
-package com.example.hunter.bean;
+package com.example.hunter.model;
 
-public class AdminBean {
+public class AdminVout {
     private String name;
     private String account;
     private String password;
-
-    public AdminBean() {
-    }
+    private String isSuccess;
+    private String errorMsg;
 
     public String getName() {
         return name;
@@ -32,12 +31,30 @@ public class AdminBean {
         this.password = password;
     }
 
+    public String getIsSuccess() {
+        return isSuccess;
+    }
+
+    public void setIsSuccess(String isSuccess) {
+        this.isSuccess = isSuccess;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
     @Override
     public String toString() {
-        return "AdminBean{" +
+        return "AdminVout{" +
                 "name='" + name + '\'' +
                 ", account='" + account + '\'' +
                 ", password='" + password + '\'' +
+                ", isSuccess='" + isSuccess + '\'' +
+                ", errorMsg='" + errorMsg + '\'' +
                 '}';
     }
 }

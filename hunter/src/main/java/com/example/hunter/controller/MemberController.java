@@ -51,6 +51,7 @@ public class MemberController {
         mb.setMainSkill(addMemberInfoVin.getMainSkill());
         mb.setSecondSkill(addMemberInfoVin.getSecondSkill());
         mb.setRole(addMemberInfoVin.getRole());
+        mb.setLanguage(addMemberInfoVin.getLanguage());
         mb.setSeniority(addMemberInfoVin.getSeniority());
         mb.setHopeWorkLoc(addMemberInfoVin.getHopeWorkLoc());
         mb.setHope(addMemberInfoVin.getHope());
@@ -111,6 +112,7 @@ public class MemberController {
         mb.setMainSkill(updateMemberVin.getMainSkill());
         mb.setSecondSkill(updateMemberVin.getSecondSkill());
         mb.setRole(updateMemberVin.getRole());
+        mb.setLanguage(updateMemberVin.getLanguage());
         mb.setSeniority(updateMemberVin.getSeniority());
         mb.setHopeWorkLoc(updateMemberVin.getHopeWorkLoc());
         mb.setHope(updateMemberVin.getHope());

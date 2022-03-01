@@ -24,6 +24,8 @@
            let allMemberList;
            let allSkillsList;
            let skillsMap = {};
+           let allJobsList;
+           let jobsMap = {};
            let thisMemberId;
            let isUpdate;
            let thisMember;
@@ -69,6 +71,7 @@
                        console.log(data);
                        allMemberList = data;
                        findAllSkill();
+                       findAllJob();
                        pageSelector();
 
                    }
@@ -103,6 +106,32 @@
 
            }
            // select全部技能結束
+
+           // select全部職務
+           function findAllJob(){
+               $.ajax({
+                   url: "/findAllJobs",
+                   type: "POST",
+                   dataType: "json",
+                   // data: JSON.stringify(memberId), //這邊放整個要傳入後端的物件
+                   contentType: "application/json;charset=utf-8",
+                   success: function (data) {
+                       allJobsList = data;
+                       $("#role").html("");
+                       for(let i in allJobsList){
+                           jobsMap[allJobsList[i].jobId] = allJobsList[i].jobName;
+
+                           $('#role').append(
+                               '<option value="' + allJobsList[i].jobId + '">' + allJobsList[i].jobName + '</option>'
+                           );
+
+                       }
+                       showPage(1);
+                   }
+               });
+
+           }
+           // select全部職務結束
 
            //分頁方法
            function pageSelector(){
@@ -231,7 +260,7 @@
                $("#hope").val("");
                $("input[type='checkbox']").prop('checked', null);
                $("#exampleModalLabel").text("新增求職者資訊");
-               $("#confirm").text("確定新增     ");
+               $("#confirm").text("確定新增");
            });
             //新增求職者方法開始
            $("#confirm").click(function () {
@@ -512,7 +541,16 @@
                              </div>
                              <div class="col-md-6">
                                  <label  class="form-label">職位</label>
-                                 <input type="text" class="form-control" id="role">
+                                 <select class="form-control form-select" aria-label="Default select example" id="role">
+                                     <option selected>Open this select menu</option>
+                                     <option value="1">One</option>
+                                     <option value="2">Two</option>
+                                     <option value="3">Three</option>
+                                 </select>
+                             </div>
+                             <div class="col-md-6">
+                                 <label  class="form-label">語言</label>
+                                 <input type="text" class="form-control" id="language">
                              </div>
                              <div class="col-md-6">
                                  <label  class="form-label">工作年資</label>

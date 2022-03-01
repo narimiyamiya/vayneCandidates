@@ -16,7 +16,7 @@ public interface LoginMapper {
             )
     public int register(AdminBean adminbean);
 
-    @Select("select account,password from admin "+
+    @Select("select * from admin "+
             "where account = #{account}"
             )
     public List<AdminBean> login(AdminBean adminbean);
