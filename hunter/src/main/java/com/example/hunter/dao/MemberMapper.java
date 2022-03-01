@@ -19,11 +19,11 @@ public interface MemberMapper {
     @Options(useGeneratedKeys = true, keyProperty = "memberId")
     @Insert({"insert into member"+
             "(name,age,gender,phone,email,school," +
-            "major,hopeWorkLoc,salary,company,mainSkill,secondSkill,role,"+
+            "major,hopeWorkLoc,salary,company,mainSkill,secondSkill,role,language"+
             "seniority,hope,client,createTime,updateTime)"+
             "values"+
             "(#{name},#{age},#{gender},#{phone},#{email},#{school}," +
-            "#{major},#{hopeWorkLoc},#{salary},#{company},#{mainSkill},#{secondSkill},#{role},"+
+            "#{major},#{hopeWorkLoc},#{salary},#{company},#{mainSkill},#{secondSkill},#{role},#{language}"+
             "#{seniority},#{hope},#{client},#{createTime},#{updateTime})"  })
     public int save(memberBean mb);
 
@@ -47,6 +47,7 @@ public interface MemberMapper {
             "mainSkill = #{mainSkill},"+
             "secondSkill = #{secondSkill},"+
             "role = #{role},"+
+            "language = #{language},"+
             "seniority = #{seniority},"+
             "hope = #{hope},"+
             "client = #{client},"+
