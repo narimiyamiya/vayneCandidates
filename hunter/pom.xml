@@ -13,15 +13,23 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>hunter</name>
     <description>hunter</description>
+    <packaging>war</packaging>
     <properties>
         <java.version>11</java.version>
+        <start-class>com.example.hunter.HunterApplication</start-class>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-tomcat</artifactId>
+        <!--打包的時候可以不用包進去，別的設施會提供。事實上該依賴理論上可以參與編譯，測試，執行等週期。
+                相當於compile，但是打包階段做了exclude操作-->
+        <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -53,19 +61,15 @@
     </dependencies>
 
     <build>
+        <finalName>Hunter</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                </configuration>
-            </plugin>
+
         </plugins>
+
     </build>
 
 </project>

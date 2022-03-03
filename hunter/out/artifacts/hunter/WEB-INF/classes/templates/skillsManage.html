@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>求職者技能管理</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="../jquery.twbsPagination.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
+    <link th:href="@{~/index.css}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <script>
+        $(function() {
+            $("#header").load("header");
+
+            let allSkillsList;
+            let thisSkillId;
+            let thisSkill;
+            let isUpdate;
+
+            findAllSkill();
+
+            // select全部技能
+            function findAllSkill(){
+                $.ajax({
+                    url: "/Hunter/findAllSkill",
+                    type: "POST",
+                    dataType: "json",
+                    // data: JSON.stringify(memberId), //這邊放整個要傳入後端的物件
+                    contentType: "application/json;charset=utf-8",
+                    success: function (data) {
+                        console.log(data);
+                        allSkillsList = data;
+                        showPage(1);
+
+                        let totalPages = allSkillsList.length/10;
+                        if(allSkillsList.length % 10 > 0){
+                            totalPages++;
+                        }
+
+                        window.pagObj = $('#pagination').twbsPagination({
+                            totalPages: totalPages,
+                            visiblePages: 5,//顯示幾個頁碼
+                            first:"第一頁",
+                            prev:"上一頁",
+                            last:"最後一頁",
+                            next:"下一頁",
+                            onPageClick: function (event, page) {
+                                showPage(page);
+                            }
+                        });
+                    }
+                });
+
+            }
+            // select全部技能結束
+
+            // 長出畫面
+            function showPage(pageNo) {
+                let tbody = $("#skillTbody");
+                tbody.html("");
+
+                let beginNo = (pageNo - 1) * 10;
+                let endNo = pageNo * 10;
+                if (allSkillsList.length < endNo) {
+                    endNo = allSkillsList.length;
+                }
+
+                for (let i = beginNo; i < endNo; i++) {
+                    let date = new Date(allSkillsList[i].createTime);
+                    let number = i + 1;
+
+                    tbody.append(
+                        `<tr>` +
+                        `<th scope="row">` + number + `</th>` +
+                        `<td>` + allSkillsList[i].skillName+`</td>` +
+                        `<td>` + allSkillsList[i].describeSkill+`</td>` +
+                        `<td>` + date.toLocaleString() + `</td>` +
+                        `<td>`+`<button name="update" style="border: none"`+`thisSkillId=`+`"`+allSkillsList[i].skillId+`"`+`>`+`<i class="fas fa-pen"></i>`+`</button>`+`</td>`+
+                        `<td>`+`<button name="deletesSkill" style="border:none"`+`thisSkillId=`+`"`+allSkillsList[i].skillId+`"`+`>`+`<i class="fas fa-trash-alt" ></i>`+`</button>`+`<td>`+
+                        `</tr>`
+                    )
+                }
+                $("[name='update']").each(function (index, element)  {
+
+                    $(this).click(function () {
+                        isUpdate = true;
+                        thisSkillId = $(this).attr("thisSkillId") ;
+                        $('#exampleModal').modal('show');
+                        $("#exampleModalLabel").text("修改技能");
+                        $("#confirm").text("確定更新");
+                        for(let i = 0;i<allSkillsList.length;i++){
+                            if(allSkillsList[i].skillId==thisSkillId){
+                                //給一個空間暫存要準備來把前端前面就撈出來的值放入表單中
+                                thisSkill = allSkillsList[i];
+                                break;
+                            }
+                        }
+                        $("#skillName").val(thisSkill.skillName);
+                        $("#describe").val(thisSkill.describeSkill);
+
+                    });
+                });
+
+                $("[name='deletesSkill']").each(function (index, element)  {
+
+                    $(this).click(function () {
+                        thisSkillId = $(this).attr("thisSkillId") ;
+
+                        let deleteSkillVin ={
+                            skillId:thisSkillId
+                        }
+                        deleteSkill(deleteSkillVin);
+
+                    });
+                });
+
+
+
+
+            }
+            // 長出畫面
+
+            //點選新增技能按鈕清除input欄位
+            $("#plusBtn").click(function (){
+                $("#skillName").val("");
+                $("#describe").val("");
+                $("#exampleModalLabel").text("新增技能");
+                $("#confirm").text("確定新增");
+            });
+
+            //點擊確認送出表單
+            $("#confirm").click(function () {
+                if (isUpdate) {
+                    let UpdateSkillVin = {
+                        skillId:thisSkillId,
+                        skillName: $("#skillName").val(),
+                        describeSkill: $("#describe").val()
+                    }
+                    UpdateSkill(UpdateSkillVin);
+
+                }else{
+                    let AddSkillVin ={
+                        skillName: $("#skillName").val(),
+                        describeSkill: $("#describe").val()
+
+                    }
+
+                    addSkill(AddSkillVin);
+                }
+            });
+
+            //新增方法開始
+            function addSkill(AddSkillVin){
+
+                $.ajax({
+                    url: "/Hunter/addSkills",
+                    data: JSON.stringify(AddSkillVin), //這邊放整個要傳入後端的物件
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function(data) {
+                        console.log(data)
+                        if(data.isSuccess=="Y"){
+                            alert(data.errorMsg);
+                            $('#exampleModal').modal('hide');
+                            thisSkill=null;
+                            thisSkillId=null;
+                            findAllSkill();
+                        }else{
+                            alert(data.errorMsg);
+                        }
+
+                    }
+
+
+                });
+            }
+
+            //更新方法開始
+            function UpdateSkill(UpdateSkillVin){
+
+                $.ajax({
+                    url: "/Hunter/updateSkills",
+                    data: JSON.stringify(UpdateSkillVin), //這邊放整個要傳入後端的物件
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function(data) {
+                        console.log(data)
+                        if(data.isSuccess=="Y"){
+                            alert(data.errorMsg);
+                            $('#exampleModal').modal('hide');
+                            thisSkill=null;
+                            thisSkillId=null;
+                            findAllSkill();
+                        }else{
+                            alert(data.errorMsg);
+                        }
+
+                    }
+
+
+                });
+            }
+            //刪除方法開始
+            function deleteSkill(deleteSkillVin){
+                if(confirm("確定要刪除該筆資料嗎?")){
+                    $.ajax({
+                        url: "/Hunter/deleteSkills",
+                        data: JSON.stringify(deleteSkillVin), //這邊放整個要傳入後端的物件
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json;charset=utf-8",
+                        success: function(data) {
+                            console.log(data)
+                            if(data.isSuccess=="Y"){
+                                alert(data.errorMsg);
+                                findAllSkill();
+                            }else{
+                                alert(data.errorMsg);
+                            }
+
+                        }
+
+                    });
+                }
+
+
+            }
+
+
+
+        });
+    </script>
+</head>
+<body>
+    <!-- 導覽開始 -->
+    <div id="header"></div>
+    <!-- 導覽結束 -->
+    <!--    麵包屑-->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: white;">
+            <li class="breadcrumb-item"><a href="#">招募管理</a></li>
+            <li class="breadcrumb-item active" aria-current="page">技能管理</li>
+        </ol>
+    </nav>
+<!--    表格開始-->
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="row" style="margin-bottom:20px">
+                    <div class="col-2"></div>
+                    <div class="col-8 " style="text-align: center;font-size: x-large;font-weight: bold;letter-spacing: 1rem">技能管理</div>
+                    <div class="col-2"><button type="button" class="btn btn-info" id="plusBtn" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus" style="margin-right: 5px"></i>新增職務</button></div>
+                </div>
+
+                <table class="table table-striped" style="margin-top:10px;">
+                    <thead style="text-align: center">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">技能名稱</th>
+                        <th scope="col">敘述</th>
+                        <th scope="col">建立時間</th>
+                        <th scope="col">修改</th>
+                        <th scope="col">刪除</th>
+                    </tr>
+                    </thead>
+                    <tbody id="skillTbody" style="text-align: center">
+                    <tr>
+                        <td>Spring</td>
+                        <td></td>
+                        <td>2022/02/22</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 表格結束 -->
+
+
+
+
+    <!-- 彈出表單 -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">新增技能</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-md-12">
+                            <label  class="form-label">技能名稱</label>
+                            <input type="text" class="form-control" id="skillName">
+                        </div>
+                        <div class="col-md-12">
+                            <label  class="form-label">敘述</label><br>
+                            <textarea type="text" class="form-control" id="describe"></textarea>
+
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-primary" id="confirm">確定新增</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 彈出表單 -->
+    <!-- 分頁開始 -->
+    <div class="pagenationbox" style="display: flex;justify-content: center" >
+        <nav aria-label="Page navigation">
+            <ul class="pagination" id="pagination"></ul>
+        </nav>
+    </div>
+    <!-- 分頁結束 -->
+
+
+
+
+
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -11,9 +11,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-    <script src="../jquery.twbsPagination.js" type="text/javascript"></script>
+    <script src="/Hunter/jquery.twbsPagination.js" type="text/javascript"></script>
     <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
-    <link th:href="@{~/index.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{~/Hunter/index.css}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 
@@ -31,7 +31,7 @@
             // select全部技能
             function findAllSkill(){
                 $.ajax({
-                    url: "/findAllSkill",
+                    url: "/Hunter/findAllSkill",
                     type: "POST",
                     dataType: "json",
                     // data: JSON.stringify(memberId), //這邊放整個要傳入後端的物件
@@ -162,7 +162,7 @@
             function addSkill(AddSkillVin){
 
                 $.ajax({
-                    url: "/addSkills",
+                    url: "/Hunter/addSkills",
                     data: JSON.stringify(AddSkillVin), //這邊放整個要傳入後端的物件
                     type: "POST",
                     dataType: "json",
@@ -189,7 +189,7 @@
             function UpdateSkill(UpdateSkillVin){
 
                 $.ajax({
-                    url: "/updateSkills",
+                    url: "/Hunter/updateSkills",
                     data: JSON.stringify(UpdateSkillVin), //這邊放整個要傳入後端的物件
                     type: "POST",
                     dataType: "json",
@@ -215,7 +215,7 @@
             function deleteSkill(deleteSkillVin){
                 if(confirm("確定要刪除該筆資料嗎?")){
                     $.ajax({
-                        url: "/deleteSkills",
+                        url: "/Hunter/deleteSkills",
                         data: JSON.stringify(deleteSkillVin), //這邊放整個要傳入後端的物件
                         type: "POST",
                         dataType: "json",

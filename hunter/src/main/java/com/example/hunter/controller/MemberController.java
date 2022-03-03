@@ -68,6 +68,7 @@ public class MemberController {
         }
         catch (Exception exception)
         {
+            exception.printStackTrace();
             amv.setIsSuccess("N");
             amv.setErrorMsg("新增求職者失敗");
         }
